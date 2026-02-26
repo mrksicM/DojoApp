@@ -416,14 +416,3 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-
-# React build output
-frontend/build/
-frontend/dist/
-frontend/.cache/
-frontend/coverage/
-
-# React lock files (optional, if you don’t want them in Git)
-frontend/package-lock.json
-frontend/yarn.lock
-
