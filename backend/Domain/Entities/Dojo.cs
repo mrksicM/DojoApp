@@ -14,5 +14,14 @@ namespace Domain.Entities
         public required Address Address { get; set; }
         public required int DojoChoId { get; set; }
         public List<Member> Members { get; set; } = new();
+
+        public Dojo(int id, string name, Contact contact, Address address, int dojoChoId)
+        {
+            Id = id;
+            Name = name;
+            Contact = contact;
+            Address = address;
+            DojoChoId = dojoChoId;
+        }
     }
 }

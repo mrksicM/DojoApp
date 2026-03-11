@@ -11,5 +11,21 @@ namespace Domain.ValueObjects
         public required string Content { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public int CreatedByMemberId { get; set; }
+
+        public Note() { }
+
+        public Note(string content, int createdByMemberId)
+        {
+            Content = content;
+            CreatedByMemberId = createdByMemberId;
+        }
+
+        public Note(int id, string content, DateTime createdAt, int createdByMemberId)
+        {
+            Id = id;
+            Content = content;
+            CreatedAt = createdAt;
+            CreatedByMemberId = createdByMemberId;
+        }
     }
 }

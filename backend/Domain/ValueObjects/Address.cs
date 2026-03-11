@@ -11,5 +11,15 @@ namespace Domain.ValueObjects
         public required int StreetNumber { get; set; }
         public required string City { get; set; }
         public string? Country { get; set; }
+
+        public Address() { }
+
+        public Address(string street, int streetNumber, string city, string? country = null)
+        {
+            Street = street;
+            StreetNumber = streetNumber;
+            City = city;
+            Country = country;
+        }
     }
 }

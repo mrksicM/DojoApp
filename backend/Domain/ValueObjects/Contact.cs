@@ -9,6 +9,14 @@ namespace Domain.ValueObjects
     {     
         public required string Email { get; set; }
         public required string PhoneNumber { get; set; }
+
+        public Contact() { }
+
+        public Contact(string email, string phoneNumber)
+        {
+            Email = email;
+            PhoneNumber = phoneNumber;
+        }
         
     }
 }

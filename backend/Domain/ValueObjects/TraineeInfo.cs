@@ -18,5 +18,18 @@ namespace Domain.ValueObjects
         public List<Note>? Notes { get; set; }
         public required string AikidoId { get; set; }
         public int DojoId { get; set; }
+
+        public TraineeInfo() { }
+
+        public TraineeInfo(int rank, string belt, string role, DateTime dateOfJoining, List<Note>? notes, string aikidoId, int dojoId)
+        {
+            Rank = rank;
+            Belt = belt;
+            Role = role;
+            DateOfJoining = dateOfJoining;
+            Notes = notes;
+            AikidoId = aikidoId;
+            DojoId = dojoId;
+        }
     }
 }

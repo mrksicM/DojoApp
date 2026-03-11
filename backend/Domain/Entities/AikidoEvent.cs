@@ -18,5 +18,18 @@ namespace Domain.Entities
         public int? OrganizerId { get; set; }
         public int? PresenterId { get; set; }
         public List<int> AttendeesIds { get; set; } = new ();
+
+        public AikidoEvent(int id, string title, string type, DateTime date, Address address, Contact contact, string? description = null, int? organizerId = null, int? presenterId = null)
+        {
+            Id = id;
+            Title = title;
+            Type = type;
+            Date = date;
+            Address = address;
+            Contact = contact;
+            Description = description;
+            OrganizerId = organizerId;
+            PresenterId = presenterId;
+        }
     }
 }

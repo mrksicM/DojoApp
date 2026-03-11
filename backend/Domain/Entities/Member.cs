@@ -10,10 +10,21 @@ namespace Domain.Entities
 {
     public class Member
     {
-        public int Id { get; set; }
+        public int Id { get; private set; }
         public required Name Name { get; set; }
         public required PersonalInfo PersonalInfo { get; set; }
         public required TraineeInfo TraineeInfo { get; set; }
         public bool IsActive { get; set; } = true;
+
+        public Member() { }
+
+        public Member(int id, Name name, PersonalInfo personalInfo, TraineeInfo traineeInfo, bool isActive = true)
+        {
+            Id = id;
+            Name = name;
+            PersonalInfo = personalInfo;
+            TraineeInfo = traineeInfo;
+            IsActive = isActive;
+        }
     }
 }

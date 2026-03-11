@@ -14,6 +14,16 @@ namespace Domain.ValueObjects
         public required Contact Contact { get; set; }
         public required DateOnly DateOfBirth { get; set; }
         public Name? ParentName { get; set; } // Optional, only for children
+
+        public PersonalInfo() { }
+
+        public PersonalInfo(Address address, Contact contact, DateOnly dateOfBirth, Name? parentName = null)
+        {
+            Address = address;
+            Contact = contact;
+            DateOfBirth = dateOfBirth;
+            ParentName = parentName;
+        }
         
     }
 }

@@ -14,5 +14,14 @@ namespace Domain.Entities
         public required Contact Contact { get; set; }
         public required Address Address { get; set; }
         public List<Dojo> Dojos { get; set; } = new ();
+
+        public Organization(int id, string name, int presidentId, Contact contact, Address address)
+        {
+            Id = id;
+            Name = name;
+            PresidentId = presidentId;
+            Contact = contact;
+            Address = address;
+        }
     }
 }

@@ -9,5 +9,19 @@ namespace Domain.ValueObjects
     {
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
+
+        public Name() { }
+
+        public Name(string firstName, string lastName)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+        }
+
+        public Name(Name name)
+        {
+            FirstName = name.FirstName;
+            LastName = name.LastName;
+        }
     }
 }
