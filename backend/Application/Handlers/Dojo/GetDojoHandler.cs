@@ -19,7 +19,7 @@ namespace Application.Handlers.Dojo
 
         public async Task<DojoDTO?> Handle(GetDojoCommand cmd)
         {
-            var dojo = await _repo.GetByIdAsync(cmd.id);
+            var dojo = await _repo.GetByIdAsync(cmd.Id);
             if (dojo == null) return null;
             return new DojoDTO
             {

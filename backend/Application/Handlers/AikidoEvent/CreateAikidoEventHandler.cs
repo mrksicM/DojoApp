@@ -19,7 +19,7 @@ namespace Application.Handlers.AikidoEvent
 
         public async Task<AikidoEventDTO> Handle(CreateAikidoEventCommand cmd)
         {
-            var dto = cmd.aikidoEventDTO;
+            var dto = cmd.AikidoEventDTO;
             var aikidoEvent = new Domain.Entities.AikidoEvent()
             {
                 Id = dto.Id,

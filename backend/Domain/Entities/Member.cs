@@ -10,7 +10,7 @@ namespace Domain.Entities
 {
     public class Member
     {
-        public int Id { get; private set; }
+        public int Id { get; set; }
         public required Name Name { get; set; }
         public required PersonalInfo PersonalInfo { get; set; }
         public required TraineeInfo TraineeInfo { get; set; }

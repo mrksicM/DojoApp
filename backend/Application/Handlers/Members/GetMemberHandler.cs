@@ -20,7 +20,7 @@ namespace Application.Handlers.Members
 
         public async Task<MembersDTO?> Handle(GetMemberCommand cmd)
         {
-            var member = await _repo.GetByIdAsync(cmd.id);
+            var member = await _repo.GetByIdAsync(cmd.Id);
             if (member == null) return null;
 
             // Map domain entity -> DTO

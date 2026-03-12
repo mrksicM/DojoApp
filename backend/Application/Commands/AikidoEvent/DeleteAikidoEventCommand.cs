@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 
 namespace Application.Commands.AikidoEvent
 {
-    public record DeleteAikidoEventCommand(int id);
+    public record DeleteAikidoEventCommand(int Id);
 }

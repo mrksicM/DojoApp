@@ -18,7 +18,7 @@ namespace Application.Handlers.AikidoEvent
 
         public async Task Handle(DeleteAikidoEventCommand command)
         {
-            var aikidoEvent = await _repo.GetByIdAsync(command.id);
+            var aikidoEvent = await _repo.GetByIdAsync(command.Id);
             if (aikidoEvent == null) return;
             await _repo.DeleteAsync(aikidoEvent.Id);
         }

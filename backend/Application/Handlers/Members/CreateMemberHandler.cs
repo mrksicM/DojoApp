@@ -21,7 +21,7 @@ namespace Application.Handlers.Members
 
         public async Task<MembersDTO> Handle(CreateMemberCommand cmd)
         {
-            var dto = cmd.memberDTO;
+            var dto = cmd.MemberDTO;
             var member = new Member()
             {
                 Name = dto.Name,

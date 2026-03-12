@@ -19,7 +19,7 @@ namespace Application.Handlers.Members
         }
         public async Task Handle(DeleteMemberCommand cmd)
         {
-            await _repo.DeleteAsync(cmd.id);
+            await _repo.DeleteAsync(cmd.Id);
         }
     }
 }

@@ -15,13 +15,16 @@ namespace Domain.Entities
         public required Address Address { get; set; }
         public List<Dojo> Dojos { get; set; } = new ();
 
-        public Organization(int id, string name, int presidentId, Contact contact, Address address)
+        public Organization() { }
+
+        public Organization(int id, string name, int presidentId, Contact contact, Address address, List<Dojo> dojos)
         {
             Id = id;
             Name = name;
             PresidentId = presidentId;
             Contact = contact;
             Address = address;
+            Dojos = dojos;
         }
     }
 }

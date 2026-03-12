@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 
 namespace Application.Commands.Dojo
 {
-    public record GetDojoCommand(int id);
+    public record GetDojoCommand(int Id);
 }

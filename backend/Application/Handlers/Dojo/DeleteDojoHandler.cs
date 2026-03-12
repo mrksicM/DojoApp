@@ -18,7 +18,7 @@ namespace Application.Handlers.Dojo
 
         public async Task Handle(DeleteDojoCommand cmd)
         {
-            await _repo.DeleteAsync(cmd.id);
+            await _repo.DeleteAsync(cmd.Id);
         }
     }
 }

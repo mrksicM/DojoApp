@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Application.DTOs;
-using Domain.Entities;
 
-namespace Application.Commands.Members
+namespace Application.Commands.Organization
 {
-    public record GetMemberCommand(int Id);
+    public record CreateOrganizationCommand(OrganizationDTO OrganizationDTO);
 }

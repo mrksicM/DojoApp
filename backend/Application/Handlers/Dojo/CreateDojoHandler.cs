@@ -22,7 +22,7 @@ namespace Application.Handlers.Dojo
 
         public async Task<DojoDTO> Handle(CreateDojoCommand cmd)
         {
-            var dto = cmd.dojoDTO;
+            var dto = cmd.DojoDTO;
             var dojo = new Domain.Entities.Dojo()
             {
                 Name = dto.Name,

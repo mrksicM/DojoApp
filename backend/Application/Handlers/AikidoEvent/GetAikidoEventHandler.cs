@@ -19,7 +19,7 @@ namespace Application.Handlers.AikidoEvent
 
         public async Task<AikidoEventDTO?> Handle(GetAikidoEventCommand cmd)
         {
-            var aikidoEvent = await _repo.GetByIdAsync(cmd.id);
+            var aikidoEvent = await _repo.GetByIdAsync(cmd.Id);
             if (aikidoEvent == null) return null;
             return new AikidoEventDTO
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Application.Commands.Dojo
+namespace Application.Commands.Organization
 {
-    public record DeleteDojoCommand(int Id);
+    public record GetOrganizationCommand(int Id);
 }

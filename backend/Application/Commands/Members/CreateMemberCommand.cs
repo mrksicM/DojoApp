@@ -3,5 +3,5 @@ using Domain.ValueObjects;
 
 namespace Application.Commands.Members
 {
-    public record CreateMemberCommand(MembersDTO memberDTO);
+    public record CreateMemberCommand(MembersDTO MemberDTO);
 }

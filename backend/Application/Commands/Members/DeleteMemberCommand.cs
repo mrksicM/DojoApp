@@ -7,5 +7,5 @@ using Domain.Entities;
 
 namespace Application.Commands.Members
 {
-    public record DeleteMemberCommand(int id);
+    public record DeleteMemberCommand(int Id);
 }
