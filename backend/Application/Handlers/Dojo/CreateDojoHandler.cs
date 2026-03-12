@@ -52,7 +52,6 @@ namespace Application.Handlers.Dojo
                     IsActive = m.IsActive
                 }).ToList()
             };
-
         }
     }
 }
