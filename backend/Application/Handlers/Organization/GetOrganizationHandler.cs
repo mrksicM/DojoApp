@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Application.Commands.Members;
-using Application.Commands.Organization;
 using Application.DTOs;
+using Application.Queries.Organizations;
 using Domain.Interfaces;
 
 namespace Application.Handlers.Organization
@@ -18,9 +13,9 @@ namespace Application.Handlers.Organization
             _repo = repo;
         }
 
-        public async Task<OrganizationDTO?> Handle(GetOrganizationCommand cmd)
+        public async Task<OrganizationDTO?> Handle(GetOrganizationByIdQuery query)
         {
-            var organization = await _repo.GetByIdAsync(cmd.Id);
+            var organization = await _repo.GetByIdAsync(query.Id);
             if (organization == null) return null;
 
             // Map domain entity -> DTO

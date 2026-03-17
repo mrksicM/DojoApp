@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Commands.Dojo;
 using Application.DTOs;
+using Application.Queries.Dojos;
 using Domain.Interfaces;
 
 namespace Application.Handlers.Dojo
@@ -17,9 +18,9 @@ namespace Application.Handlers.Dojo
             _repo = repo;
         }
 
-        public async Task<DojoDTO?> Handle(GetDojoCommand cmd)
+        public async Task<DojoDTO?> Handle(GetDojoByIdQuery query)
         {
-            var dojo = await _repo.GetByIdAsync(cmd.Id);
+            var dojo = await _repo.GetByIdAsync(query.Id);
             if (dojo == null) return null;
             return new DojoDTO
             {

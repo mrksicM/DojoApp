@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Commands.Members;
 using Application.DTOs;
 using Application.Handlers.Members;
+using Application.Queries.Members;
 using Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +34,7 @@ namespace DojoBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var member = await _getByIdHandler.Handle(new GetMemberCommand(id));
+            var member = await _getByIdHandler.Handle(new GetMemberByIdQuery(id));
             if (member == null)                
                 return NotFound();
             return Ok(member);
@@ -46,7 +43,7 @@ namespace DojoBackend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var member = await _getByIdHandler.Handle(new GetMemberCommand(id));
+            var member = await _getByIdHandler.Handle(new GetMemberByIdQuery(id));
             if (member == null)
                 return NotFound();
             await _deleteHandler.Handle(new DeleteMemberCommand(id));

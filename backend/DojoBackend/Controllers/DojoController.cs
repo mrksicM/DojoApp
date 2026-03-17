@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 using Application.Commands.Dojo;
 using Application.DTOs;
 using Application.Handlers.Dojo;
-using Domain.ValueObjects;
+using Application.Queries.Dojos;
 using Microsoft.AspNetCore.Mvc;
 namespace DojoBackend.Controllers
 {
@@ -38,7 +33,7 @@ namespace DojoBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var dojo = await _getByIdHandler.Handle(new GetDojoCommand(id));
+            var dojo = await _getByIdHandler.Handle(new GetDojoByIdQuery(id));
             if (dojo == null)                
                 return NotFound();
             return Ok(dojo);
@@ -47,7 +42,7 @@ namespace DojoBackend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var dojo = await _getByIdHandler.Handle(new GetDojoCommand(id));
+            var dojo = await _getByIdHandler.Handle(new GetDojoByIdQuery(id));
             if (dojo == null)
                 return NotFound();
             await _deleteHandler.Handle(new DeleteDojoCommand(id));

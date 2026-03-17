@@ -1,5 +1,4 @@
 using Application.DTOs;
-using Domain.ValueObjects;
 
 namespace Application.Commands.Members
 {

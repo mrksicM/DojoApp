@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Entities;
 using Application.DTOs;
 using Domain.Interfaces;
 using Application.Commands.Dojo;
-using System.Runtime.InteropServices;
-using Domain.ValueObjects;
 
 namespace Application.Handlers.Dojo
 {

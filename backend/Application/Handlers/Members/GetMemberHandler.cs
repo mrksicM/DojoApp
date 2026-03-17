@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Commands.Members;
 using Application.DTOs;
+using Application.Queries.Members;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -18,9 +19,9 @@ namespace Application.Handlers.Members
             _repo = repo;
         }
 
-        public async Task<MembersDTO?> Handle(GetMemberCommand cmd)
+        public async Task<MembersDTO?> Handle(GetMemberByIdQuery query)
         {
-            var member = await _repo.GetByIdAsync(cmd.Id);
+            var member = await _repo.GetByIdAsync(query.Id);
             if (member == null) return null;
 
             // Map domain entity -> DTO

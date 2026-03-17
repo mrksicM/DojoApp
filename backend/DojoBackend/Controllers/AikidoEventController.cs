@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Commands.AikidoEvent;
-using Application.Commands.Dojo;
 using Application.DTOs;
 using Application.Handlers.AikidoEvent;
+using Application.Queries.AikidoEvents;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DojoBackend.Controllers
@@ -38,7 +34,7 @@ namespace DojoBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var aikidoEvent = await _getByIdHandler.Handle(new GetAikidoEventCommand(id));
+            var aikidoEvent = await _getByIdHandler.Handle(new GetAikidoEventByIdQuery(id));
             if (aikidoEvent == null)
                 return NotFound();
             return Ok(aikidoEvent);
@@ -47,7 +43,7 @@ namespace DojoBackend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var aikidoEvent = await _getByIdHandler.Handle(new GetAikidoEventCommand(id));
+            var aikidoEvent = await _getByIdHandler.Handle(new GetAikidoEventByIdQuery(id));
             if (aikidoEvent == null)
                 return NotFound();
             await _deleteHandler.Handle(new DeleteAikidoEventCommand(id));

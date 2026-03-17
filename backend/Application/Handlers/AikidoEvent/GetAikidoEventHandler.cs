@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Commands.AikidoEvent;
 using Application.DTOs;
+using Application.Queries.AikidoEvents;
 using Domain.Interfaces;
 
 namespace Application.Handlers.AikidoEvent
@@ -17,9 +18,9 @@ namespace Application.Handlers.AikidoEvent
             _repo = repo;
         }
 
-        public async Task<AikidoEventDTO?> Handle(GetAikidoEventCommand cmd)
+        public async Task<AikidoEventDTO?> Handle(GetAikidoEventByIdQuery query)
         {
-            var aikidoEvent = await _repo.GetByIdAsync(cmd.Id);
+            var aikidoEvent = await _repo.GetByIdAsync(query.Id);
             if (aikidoEvent == null) return null;
             return new AikidoEventDTO
             {
