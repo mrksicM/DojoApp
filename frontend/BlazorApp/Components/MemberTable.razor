@@ -1,0 +1,35 @@
+﻿@using BlazorApp.Models
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Contact</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Members is not null && Members.Any())
+        {
+            @foreach (var member in Members)
+            {
+                <tr>
+                    <td>@member.FirstName @member.LastName</td>
+                    <td>@member.Street, @member.StreetNumber, @member.City</td>
+                    <td>@member.Email, @member.PhoneNumber</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">No members available</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter] public List<Member> Members { get; set; } = new();
+}
+

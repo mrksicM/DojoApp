@@ -1,0 +1,27 @@
+﻿@page "/Members"
+@inject MemberService MemberService
+@using BlazorApp.Models
+@using BlazorApp.Components
+
+<h3>Member Management</h3>
+
+<MemberForm OnMemberCreated="AddMember" />
+<MemberTable Members="@Members" />
+
+@code {
+    private List<Member> Members = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Members = await MemberService.GetMembersAsync();
+    }
+
+    private async Task AddMember(Member Member)
+    {
+        var created = await MemberService.CreateMemberAsync(Member);
+        if (created is not null)
+        {
+            Members.Add(created);
+        }
+    }
+}
