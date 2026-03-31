@@ -9,8 +9,8 @@ namespace Domain.ValueObjects
     {
         public int Id { get; set; }
         public required string Content { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public int CreatedByMemberId { get; set; }
+        public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+        public int? CreatedByMemberId { get; set; }
 
         public Note() { }
 

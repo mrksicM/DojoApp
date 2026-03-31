@@ -1,0 +1,21 @@
+@typeparam TItem
+
+@code {
+    [CascadingParameter] public DataGrid<TItem> ParentGrid { get; set; } = default!;
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string Property { get; set; } = "";
+    [Parameter] public Func<TItem, object> ValueSelector { get; set; } = _ => "";
+    [Parameter] public RenderFragment<TItem>? Template { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        ParentGrid.AddColumn(new ColumnDefinition<TItem>
+        {
+            Title = Title,
+            Property = Property,
+            ValueSelector = ValueSelector,
+            Template = Template
+        });
+    }
+}

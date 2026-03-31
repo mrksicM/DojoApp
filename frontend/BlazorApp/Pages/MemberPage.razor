@@ -1,11 +1,14 @@
 ﻿@page "/Members"
-@inject MemberService MemberService
+@inject ICrudService<Member> MemberService
+@using BlazorApp.Interfaces
 @using BlazorApp.Models
-@using BlazorApp.Components
+@using BlazorApp.Components.Members
+@using BlazorApp.Services
 
 <h3>Member Management</h3>
 
 <MemberForm OnMemberCreated="AddMember" />
+<div class="border-top my-3"></div>
 <MemberTable Members="@Members" />
 
 @code {
@@ -13,12 +16,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Members = await MemberService.GetMembersAsync();
+        Members = (await MemberService.GetAllAsync()).ToList();
+
     }
 
     private async Task AddMember(Member Member)
     {
-        var created = await MemberService.CreateMemberAsync(Member);
+        var created = await MemberService.CreateAsync(Member);
         if (created is not null)
         {
             Members.Add(created);

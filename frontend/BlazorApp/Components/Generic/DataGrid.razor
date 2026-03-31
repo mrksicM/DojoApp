@@ -1,0 +1,114 @@
+@using System.Linq
+@using BlazorApp.Models
+@typeparam TItem
+
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+
+<input @bind-value="SearchTerm" @bind-value:event="oninput" placeholder="Search..." class="form-control mb-2 w-25" />
+
+@if (Columns.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                @foreach (var column in Columns)
+                {
+                    <th @onclick="() => SortBy(column.Property)">
+                        @column.Title
+                        @(SortColumn == column.Property ? (SortAscending ? "▲" : "▼") : "")
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in PagedItems)
+            {
+                <tr>
+                    @foreach (var column in Columns)
+                    {
+                        <td>
+                            @if (column.Template is not null)
+                            {
+                                @column.Template(item)
+                            }
+                            else if (column.ValueSelector is not null)
+                            {
+                                @column.ValueSelector(item)
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">No columns defined.</p>
+}
+
+<div class="d-flex justify-content-between">
+    <button @onclick="PreviousPage" disabled="@(CurrentPage == 1)" class="btn btn-secondary">Prev</button>
+    <span>Page @CurrentPage of @TotalPages</span>
+    <button @onclick="NextPage" disabled="@(CurrentPage == TotalPages)" class="btn btn-secondary">Next</button>
+</div>
+
+@code {
+    private string SearchTerm = "";
+    private string SortColumn = "";
+    private bool SortAscending = true;
+    private int CurrentPage = 1;
+    private int PageSize = 10;
+
+    [Parameter] public IEnumerable<TItem> Items { get; set; } = Enumerable.Empty<TItem>();
+    [Parameter] public RenderFragment ChildContent { get; set; } = default!;
+
+    private List<ColumnDefinition<TItem>> Columns = new();
+
+    public void AddColumn(ColumnDefinition<TItem> column) => Columns.Add(column);
+
+    private IEnumerable<TItem> FilteredItems =>
+        string.IsNullOrWhiteSpace(SearchTerm)
+            ? Items
+            : Items.Where(i =>
+            {
+                var term = SearchTerm.Trim().ToLowerInvariant();
+                // check all string properties of TItem
+                return typeof(TItem).GetProperties()
+                    .Where(p => p.PropertyType == typeof(string))
+                    .Select(p => p.GetValue(i)?.ToString()?.ToLowerInvariant())
+                    .Any(val => val != null && val.Contains(term));
+            });
+
+    private IEnumerable<TItem> SortedItems =>
+        string.IsNullOrEmpty(SortColumn)
+            ? FilteredItems
+            : (SortAscending
+                ? FilteredItems.OrderBy(i => GetPropertyValue(i, SortColumn))
+                : FilteredItems.OrderByDescending(i => GetPropertyValue(i, SortColumn)));
+
+    private IEnumerable<TItem> PagedItems =>
+        SortedItems.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
+
+    private int TotalPages => (int)Math.Ceiling((double)FilteredItems.Count() / PageSize);
+
+    private void SortBy(string column)
+    {
+        if (SortColumn == column)
+            SortAscending = !SortAscending;
+        else
+        {
+            SortColumn = column;
+            SortAscending = true;
+        }
+    }
+
+    private object GetPropertyValue(TItem item, string propertyName) =>
+        typeof(TItem).GetProperty(propertyName)?.GetValue(item) ?? "";
+
+    private void NextPage() { if (CurrentPage < TotalPages) CurrentPage++; }
+    private void PreviousPage() { if (CurrentPage > 1) CurrentPage--; }
+}

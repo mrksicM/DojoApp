@@ -31,9 +31,22 @@ namespace Application.Handlers.Dojo
                 DojoChoId = dojo.DojoChoId,
                 Members = dojo.Members.Select(m => new MembersDTO
                 {
-                    Name = m.Name,
-                    PersonalInfo = m.PersonalInfo,
-                    TraineeInfo = m.TraineeInfo
+                    Id = m.Id,
+                    FirstName = m.Name.FirstName,
+                    LastName = m.Name.LastName,
+                    Street = m.PersonalInfo.Address.Street,
+                    StreetNumber = m.PersonalInfo.Address.StreetNumber.ToString(),
+                    City = m.PersonalInfo.Address.City,
+                    Country = m.PersonalInfo.Address.Country,
+                    Email = m.PersonalInfo.Contact.Email,
+                    PhoneNumber = m.PersonalInfo.Contact.PhoneNumber,
+                    DateOfBirth = m.PersonalInfo.DateOfBirth,
+                    Rank = m.TraineeInfo.Rank,
+                    Belt = m.TraineeInfo.Belt,
+                    Role = m.TraineeInfo.Role,
+                    DateOfJoining = m.TraineeInfo.DateOfJoining,
+                    AikidoId = m.TraineeInfo.AikidoId,
+                    IsActive = m.IsActive
                 }).ToList()
             };
         }

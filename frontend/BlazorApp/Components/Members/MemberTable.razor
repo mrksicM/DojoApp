@@ -1,0 +1,241 @@
+﻿@using BlazorApp.Interfaces
+@using BlazorApp.Models
+@using BlazorApp.Components.Generic
+@using BlazorApp.Services
+@inject ToastService ToastService
+
+@inject ICrudService<Member> MemberService
+
+<DataGrid TItem="Member" Items="@Members">
+    <ColumnDefinition TItem="Member" Title="Name" Property="FirstName"
+                      ValueSelector="@(m => $"{m.FirstName} {m.LastName}")" />
+    <ColumnDefinition TItem="Member" Title="Address" Property="Street"
+                      ValueSelector="@(m => $"{m.Street}, {m.StreetNumber}, {m.City}")" />
+    <ColumnDefinition TItem="Member" Title="Contact" Property="Email"
+                      ValueSelector="@(m => $"{m.Email}, {m.PhoneNumber}")" />
+    <ColumnDefinition TItem="Member" Title="Actions" Property="">
+        <Template Context="m">
+            <button class="btn btn-success me-2" @onclick="() => OpenUpdateModal(m)">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+
+            <button class="btn btn-danger" @onclick="async () => await DeleteMember(m)">
+                <i class="bi bi-trash"></i>
+            </button>
+        </Template>
+    </ColumnDefinition>
+</DataGrid>
+
+<div class="modal fade @(ShowUpdateModal ? "show d-block" : "")" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Member Details</h5>
+                <button type="button" class="btn-close" @onclick="CloseModal"></button>
+            </div>
+            <div class="modal-body">
+                @if (SelectedMember != null)
+                {
+                    <EditForm Model="SelectedMember">
+                        <div class="mb-3">
+                            <label>First Name:</label>
+                            <InputText @bind-Value="SelectedMember.FirstName" class="form-control mb-2"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Last Name:</label>
+                            <InputText @bind-Value="SelectedMember.LastName" class="form-control mb-2"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Date of Birth:</label>
+                            <InputDate @bind-Value="SelectedMember.DateOfBirth" class="form-control mb-2"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        @if (SelectedMember.ParentFirstName != null || SelectedMember.ParentLastName != null)
+                        {
+                            <div class="mb-3">
+                                <label>Parent First Name:</label>
+                                <InputText @bind-Value="SelectedMember.ParentFirstName" class="form-control w-auto"
+                                           readonly="@IsReadOnly" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Parent Last Name:</label>
+                                <InputText @bind-Value="SelectedMember.ParentLastName" class="form-control w-auto"
+                                           readonly="@IsReadOnly" />
+                            </div>
+                        }
+                        <div class="mb-3">
+                            <label>Street:</label>
+                            <InputText @bind-Value="SelectedMember.Street" class="form-control w-auto"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Street Number:</label>
+                            <InputText @bind-Value="SelectedMember.StreetNumber" class="form-control w-auto"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>City:</label>
+                            <InputText @bind-Value="SelectedMember.City" class="form-control w-auto"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Country:</label>
+                            <InputText @bind-Value="SelectedMember.Country" class="form-control w-auto"
+                                       readonly="@IsReadOnly" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Phone Number:</label>
+                            <InputText @bind-Value="SelectedMember.PhoneNumber" class="form-control mb-2"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Email:</label>
+                            <InputText @bind-Value="SelectedMember.Email" class="form-control mb-2"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Rank:</label>
+                            <InputNumber @bind-Value="SelectedMember.Rank" class="form-control w-auto" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Belt:</label>
+                            <InputSelect @bind-Value="SelectedMember.Belt" class="form-control w-auto"
+                                         readonly="@IsReadOnly">
+                                <option value="White">White</option>
+                                <option value="Black">Black</option>
+                            </InputSelect>
+                        </div>
+                        <div class="mb-3">
+                            <label>Role:</label>
+                            <InputText @bind-Value="SelectedMember.Role" class="form-control w-auto"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Date of Joining:</label>
+                            <InputDate @bind-Value="SelectedMember.DateOfJoining" class="form-control w-auto"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Aikido ID:</label>
+                            <InputText @bind-Value="SelectedMember.AikidoId" class="form-control w-auto"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Notes:</label>
+                            <InputTextArea @bind-Value="SelectedMember.NoteContent" class="form-control w-25"
+                                           readonly="@IsReadOnly" />
+                        </div>
+                    </EditForm>
+                }
+            </div>
+            <div class="modal-footer">
+                @if (IsReadOnly)
+                {
+                    <button class="btn btn-primary" @onclick="EnableEditing">Update</button>
+                }
+                else
+                {
+                    <button class="btn btn-success" @onclick="SaveChanges">Save</button>
+                }
+                <button class="btn btn-secondary" @onclick="CloseModal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter] public List<Member> Members { get; set; } = new();
+    private bool ShowUpdateModal = false;
+    private bool IsReadOnly = true;
+    private Member? SelectedMember { get; set; } = new Member();
+
+
+    private RenderFragment RenderActions(Member member) => builder =>
+    {
+        var seq = 0;
+        builder.OpenElement(seq++, "button");
+        builder.AddAttribute(seq++, "type", "button");
+        builder.AddAttribute(seq++, "class", "btn btn-success");
+        builder.AddContent(seq++, (MarkupString)"<i class='bi bi-pencil-square'></i>");
+        builder.CloseElement();
+
+        builder.OpenElement(seq++, "button");
+        builder.AddAttribute(seq++, "type", "button");
+        builder.AddAttribute(seq++, "class", "btn btn-danger ms-2");
+        builder.AddContent(seq++, (MarkupString)"<i class='bi bi-trash'></i>");
+        builder.CloseElement();
+    };
+
+    private void OpenUpdateModal(Member member)
+    {
+        SelectedMember = new Member
+        {
+            Id = member.Id,
+            FirstName = member.FirstName,
+            LastName = member.LastName,
+            Email = member.Email,
+            PhoneNumber = member.PhoneNumber,
+            Street = member.Street,
+            StreetNumber = member.StreetNumber,
+            City = member.City,
+            Country = member.Country,
+            DateOfBirth = member.DateOfBirth,
+            ParentFirstName = member.ParentFirstName,
+            ParentLastName = member.ParentLastName,
+            Rank = member.Rank,
+            Belt = member.Belt,
+            Role = member.Role,
+            DateOfJoining = member.DateOfJoining,
+            AikidoId = member.AikidoId,
+            NoteContent = member.NoteContent,
+            NoteCreatedAt = member.NoteCreatedAt,
+            NoteCreatedByMemberId = member.NoteCreatedByMemberId
+        };
+        IsReadOnly = true;
+        ShowUpdateModal = true;
+    }
+
+    private void EnableEditing()
+    {
+        IsReadOnly = false;
+    }
+
+    private void CloseModal()
+    {
+        ShowUpdateModal = false;
+    }
+
+    private async Task SaveChanges()
+    {
+        if (SelectedMember != null)
+        {
+            var updated = await MemberService.UpdateAsync(SelectedMember);
+            var index = Members.FindIndex(m => m.Id == SelectedMember.Id);
+            if (index >= 0)
+                Members[index] = updated;
+
+            ToastService.ShowToast("Member updated successfully!", "text-bg-success");
+        }
+        ShowUpdateModal = false;
+    }
+
+    private async Task DeleteMember(Member member)
+    {
+        var success = await MemberService.DeleteAsync(member.Id);
+        if (success)
+        {
+            Members.Remove(member);
+            ToastService.ShowToast("Member deleted successfully!", "text-bg-danger");
+        }
+        else
+        {
+            ToastService.ShowToast("Failed to delete member!", "text-bg-danger");
+        }
+    }
+}

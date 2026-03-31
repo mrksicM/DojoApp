@@ -1,0 +1,28 @@
+@using BlazorApp.Services
+@inject ToastService ToastService
+
+<Toast Message="@Message" CssClass="@CssClass" />
+
+@code {
+    private string Message = string.Empty;
+    private string CssClass = "text-bg-success";
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnShow += ShowToast;
+    }
+
+    private void ShowToast(string message, string cssClass)
+    {
+        Message = message;
+        CssClass = cssClass;
+
+        // Auto-hide after 3 seconds
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(3000);
+            Message = string.Empty;
+            StateHasChanged();
+        });
+    }
+}

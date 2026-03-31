@@ -1,0 +1,20 @@
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        <div class="toast show align-items-center @CssClass border-0">
+            <div class="d-flex">
+                <div class="toast-body">
+                    @Message
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" @onclick="Hide"></button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string Message { get; set; } = string.Empty;
+    [Parameter] public string CssClass { get; set; } = "text-bg-success";
+
+    private void Hide() => Message = string.Empty;
+}

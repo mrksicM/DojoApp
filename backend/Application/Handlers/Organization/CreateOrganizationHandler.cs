@@ -1,6 +1,8 @@
 using Application.Commands.Organization;
 using Application.DTOs;
+using Domain.Entities;
 using Domain.Interfaces;
+using Domain.ValueObjects;
 
 namespace Application.Handlers.Organization
 {
@@ -30,12 +32,37 @@ namespace Application.Handlers.Organization
                     Contact = d.Contact,
                     Address = d.Address,
                     DojoChoId = d.DojoChoId,
-                    Members = d.Members.Select(m => new Domain.Entities.Member
+                    Members = d.Members.Select(m => new Member
                     {
                         Id = m.Id,
-                        Name = m.Name,
-                        PersonalInfo = m.PersonalInfo,
-                        TraineeInfo = m.TraineeInfo,
+                        Name = new Name(m.FirstName, m.LastName),
+                        PersonalInfo = new PersonalInfo
+                        {
+                            Address = new Address
+                            {
+                                Street = m.Street,
+                                StreetNumber = m.StreetNumber,
+                                City = m.City,
+                                Country = m.Country
+                            },
+                            Contact = new Contact
+                            {
+                                Email = m.Email,
+                                PhoneNumber = m.PhoneNumber
+                            },
+                            DateOfBirth = m.DateOfBirth,
+                            ParentName = m.ParentFirstName != null && m.ParentLastName != null
+                                ? new Domain.ValueObjects.Name(m.ParentFirstName, m.ParentLastName)
+                                : null
+                        },
+                        TraineeInfo = new TraineeInfo
+                        {
+                            Rank = m.Rank,
+                            Belt = m.Belt,
+                            Role = m.Role,
+                            DateOfJoining = m.DateOfJoining,
+                            AikidoId = m.AikidoId
+                        },
                         IsActive = m.IsActive
                     }).ToList()
                 }).ToList()
@@ -58,9 +85,22 @@ namespace Application.Handlers.Organization
                     Members = d.Members.Select(m => new MembersDTO
                     {
                         Id = m.Id,
-                        Name = m.Name,
-                        PersonalInfo = m.PersonalInfo,
-                        TraineeInfo = m.TraineeInfo,
+                        FirstName = m.Name.FirstName,
+                        LastName = m.Name.LastName,
+                        Street = m.PersonalInfo.Address.Street,
+                        StreetNumber = m.PersonalInfo.Address.StreetNumber.ToString(),
+                        City = m.PersonalInfo.Address.City,
+                        Country = m.PersonalInfo.Address.Country,
+                        Email = m.PersonalInfo.Contact.Email,
+                        PhoneNumber = m.PersonalInfo.Contact.PhoneNumber,
+                        DateOfBirth = m.PersonalInfo.DateOfBirth,
+                        ParentFirstName = m.PersonalInfo.ParentName?.FirstName,
+                        ParentLastName = m.PersonalInfo.ParentName?.LastName,
+                        Rank = m.TraineeInfo.Rank,
+                        Belt = m.TraineeInfo.Belt,
+                        Role = m.TraineeInfo.Role,
+                        DateOfJoining = m.TraineeInfo.DateOfJoining,
+                        AikidoId = m.TraineeInfo.AikidoId,
                         IsActive = m.IsActive
                     }).ToList()
                 }).ToList()

@@ -1,4 +1,5 @@
 using Domain.Entities;
+using Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
@@ -9,6 +10,7 @@ namespace Infrastructure.Repositories
         public DbSet<Dojo> Dojos { get; set; }
         public DbSet<AikidoEvent> AikidoEvents { get; set; }
         public DbSet<Organization> Organizations { get; set; }
+        //public DbSet<Note> Notes { get; set; }
 
         public DojoDbContext(DbContextOptions<DojoDbContext> options)
             : base(options) { }
@@ -41,9 +43,6 @@ namespace Infrastructure.Repositories
                         nb.Property(n => n.CreatedAt).IsRequired();
                         nb.Property(n => n.CreatedByMemberId).IsRequired();
                     });
-
-                    // DojoId is just a scalar property
-                    ti.Property(t => t.DojoId).IsRequired();
                 });
 
                 // Name as an owned type

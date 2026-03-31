@@ -1,10 +1,11 @@
 using Domain.Entities;
+using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace Infrastructure.Repositories
 {
-    public class OrganizationRepository
+    public class OrganizationRepository : IOrganizationRepository
     {
         private readonly DojoDbContext _context;
 
