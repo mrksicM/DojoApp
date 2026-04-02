@@ -23,8 +23,18 @@ namespace Application.Handlers.Organization
                 Id = dto.Id,
                 Name = dto.Name,
                 PresidentId = dto.PresidentId,
-                Contact = dto.Contact,
-                Address = dto.Address,
+                Address = new Address
+                {
+                    Street = dto.Street,
+                    StreetNumber = dto.StreetNumber,
+                    City = dto.City,
+                    Country = dto.Country
+                },
+                Contact = new Contact
+                {
+                    Email = dto.Email,
+                    PhoneNumber = dto.PhoneNumber
+                },
                 Dojos = dto.Dojos.Select(d => new Domain.Entities.Dojo
                 {
                     Id = d.Id,
@@ -73,8 +83,6 @@ namespace Application.Handlers.Organization
                 Id = organization.Id,
                 Name = organization.Name,
                 PresidentId = organization.PresidentId,
-                Contact = organization.Contact,
-                Address = organization.Address,
                 Dojos = organization.Dojos.Select(d => new DojoDTO
                 {
                     Id = d.Id,

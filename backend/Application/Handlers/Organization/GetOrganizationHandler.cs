@@ -24,8 +24,12 @@ namespace Application.Handlers.Organization
                 Id = organization.Id,
                 Name = organization.Name,
                 PresidentId = organization.PresidentId,
-                Contact = organization.Contact,
-                Address = organization.Address,
+                Street = organization.Address?.Street ?? "",
+                StreetNumber = organization.Address?.StreetNumber ?? "",
+                City = organization.Address?.City ?? "",
+                Country = organization.Address?.Country,
+                Email = organization.Contact?.Email ?? "",
+                PhoneNumber = organization.Contact?.PhoneNumber ?? "",
                 Dojos = organization.Dojos.Select(d => new DojoDTO
                 {
                     Id = d.Id,
@@ -37,6 +41,31 @@ namespace Application.Handlers.Organization
             };
 
         }
-        
+
+        public async Task<IEnumerable<OrganizationDTO>> Handle(GetAllOrganizationsQuery query)
+        {
+            var organizations = await _repo.GetAllAsync();
+            // Map domain entities -> DTOs
+            return organizations.Select(organization => new OrganizationDTO
+            {
+                Id = organization.Id,
+                Name = organization.Name,
+                PresidentId = organization.PresidentId,
+                Street = organization.Address?.Street ?? "",
+                StreetNumber = organization.Address?.StreetNumber ?? "",
+                City = organization.Address?.City ?? "",
+                Country = organization.Address?.Country,
+                Email = organization.Contact?.Email ?? "",
+                PhoneNumber = organization.Contact?.PhoneNumber ?? "",
+                Dojos = organization.Dojos.Select(d => new DojoDTO
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Contact = d.Contact,
+                    Address = d.Address,
+                    DojoChoId = d.DojoChoId
+                }).ToList()
+            }).ToList();
+        }
     }
 }

@@ -45,7 +45,6 @@ namespace Application.DTOs
         // Status
         public bool IsActive { get; set; }
 
-
         public MembersDTO() { }
     }
 }

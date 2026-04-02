@@ -10,6 +10,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<ICrudService<Member>, MemberService>();
+builder.Services.AddScoped<ICrudService<Organization>, OrganizationService>();
 builder.Services.AddScoped<ToastService>();
 
 

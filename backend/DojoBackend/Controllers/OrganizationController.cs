@@ -2,6 +2,7 @@ using Application.Commands.Organization;
 using Application.DTOs;
 using Application.Handlers.Organization;
 using Application.Queries.Organizations;
+using Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DojoBackend.Controllers
@@ -58,8 +59,18 @@ namespace DojoBackend.Controllers
                 dto.Id,
                 dto.Name,
                 dto.PresidentId,
-                dto.Contact,
-                dto.Address,
+                new Contact
+                {
+                    Email = dto.Email,
+                    PhoneNumber = dto.PhoneNumber
+                },
+                new Address
+                {
+                    Street = dto.Street,
+                    StreetNumber = dto.StreetNumber,
+                    City = dto.City,
+                    Country = dto.Country
+                },
                 dto.Dojos.Select(d => new DojoDTO
                 {
                     Id = d.Id,
@@ -73,9 +84,36 @@ namespace DojoBackend.Controllers
             var success = await _updateHandler.Handle(cmd);
             if (!success) return NotFound();
 
-            return NoContent();
+            return Ok(dto);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var organizations = await _getByIdHandler.Handle(new GetAllOrganizationsQuery());
 
+            var dtos = organizations.Select(organization => new OrganizationDTO
+            {
+                Id = organization.Id,
+                Name = organization.Name,
+                PresidentId = organization.PresidentId,
+                Street = organization.Street ?? "",
+                StreetNumber = organization.StreetNumber ?? "",
+                City = organization.City ?? "",
+                Country = organization.Country,
+                Email = organization.Email ?? "",
+                PhoneNumber = organization.PhoneNumber ?? "",
+                Dojos = organization.Dojos.Select(d => new DojoDTO
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Contact = d.Contact,
+                    Address = d.Address,
+                    DojoChoId = d.DojoChoId
+                }).ToList()
+            }).ToList();
+
+            return Ok(dtos);
+        }
 
     }
 }

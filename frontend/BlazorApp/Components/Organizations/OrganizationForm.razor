@@ -1,0 +1,67 @@
+@using BlazorApp.Interfaces
+@using BlazorApp.Models
+@using BlazorApp.Services
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+
+<EditForm Model="@newOrganization" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Name:</label>
+        <InputText @bind-Value="newOrganization.Name" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>President ID:</label>
+        <InputSelect @bind-Value="newOrganization.PresidentId" class="form-control w-auto">
+            <option value="">Select President</option>
+            @foreach (var member in Members)
+            {
+                <option value="@member.Id">@member.FirstName @member.LastName</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="mb-3">
+        <label>Email:</label>
+        <InputText @bind-Value="newOrganization.Email" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>Phone Number:</label>
+        <InputText @bind-Value="newOrganization.PhoneNumber" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>Street:</label>
+        <InputText @bind-Value="newOrganization.Street" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>Street Number:</label>
+        <InputText @bind-Value="newOrganization.StreetNumber" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>City:</label>
+        <InputText @bind-Value="newOrganization.City" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>Country:</label>
+        <InputText @bind-Value="newOrganization.Country" class="form-control w-auto" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Organization</button>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public EventCallback<Organization> OnOrganizationCreated { get; set; }
+    [Parameter]
+    public List<Member> Members { get; set; } = new();
+    private ICrudService<Organization> OrganizationService { get; set; } = default!;
+    private Organization newOrganization = new Organization();
+
+    private async Task HandleValidSubmit()
+    {
+        await OnOrganizationCreated.InvokeAsync(newOrganization);
+        newOrganization = new Organization(); // Reset form after submission
+    }
+}

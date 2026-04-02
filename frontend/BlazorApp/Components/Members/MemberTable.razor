@@ -147,10 +147,9 @@
     </div>
 </div>
 
-
-
 @code {
-    [Parameter] public List<Member> Members { get; set; } = new();
+    [Parameter]
+    public List<Member> Members { get; set; } = new();
     private bool ShowUpdateModal = false;
     private bool IsReadOnly = true;
     private Member? SelectedMember { get; set; } = new Member();

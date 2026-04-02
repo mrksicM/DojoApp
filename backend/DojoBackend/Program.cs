@@ -1,4 +1,5 @@
 using Application.Handlers.Members;
+using Application.Handlers.Organization;
 using Domain.Interfaces;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -11,14 +12,23 @@ builder.Services.AddOpenApi();
 Console.WriteLine("ConnStr: " + builder.Configuration.GetConnectionString("DefaultConnection"));
 builder.Services.AddDbContext<DojoDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // Register repositories
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
 
 // Register handlers
+// Members
 builder.Services.AddScoped<CreateMemberHandler>();
 builder.Services.AddScoped<GetMemberHandler>();
 builder.Services.AddScoped<DeleteMemberHandler>();
 builder.Services.AddScoped<UpdateMemberHandler>();
+
+// Organizations
+builder.Services.AddScoped<CreateOrganizationHandler>();
+builder.Services.AddScoped<GetOrganizationHandler>();
+builder.Services.AddScoped<DeleteOrganizationHandler>();
+builder.Services.AddScoped<UpdateOrganizationHandler>();
 
 // Register services
 builder.Services.AddControllers();

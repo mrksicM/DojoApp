@@ -1,0 +1,192 @@
+@using BlazorApp.Components.Generic
+@using BlazorApp.Interfaces
+@using BlazorApp.Models
+@using BlazorApp.Services
+@inject ToastService ToastService
+
+@inject ICrudService<Organization> OrganizationService
+
+<DataGrid TItem="Organization" Items="@Organizations">
+    <ColumnDefinition TItem="Organization" Title="Name" Property="Name" ValueSelector="@(org => $"{org.Name}")" />
+    <ColumnDefinition TItem="Organization" Title="President" Property="PresidentId"
+                      ValueSelector="@(org => {
+                          var president = Members.FirstOrDefault(m => m.Id == org.PresidentId);
+                          return president != null ? $"{president.FirstName} {president.LastName}" : "N/A";
+                      })" />
+    <ColumnDefinition TItem="Organization" Title="Email" Property="Email" ValueSelector="@(org => $"{org.Email}")" />
+    <ColumnDefinition TItem="Organization" Title="Phone Number" Property="PhoneNumber"
+                      ValueSelector="@(org => $"{org.PhoneNumber}")" />
+    <ColumnDefinition TItem="Organization" Title="Street" Property="Street" ValueSelector="@(org => $"{org.Street}")" />
+    <ColumnDefinition TItem="Organization" Title="Street Number" Property="StreetNumber"
+                      ValueSelector="@(org => $"{org.StreetNumber}")" />
+    <ColumnDefinition TItem="Organization" Title="City" Property="City" ValueSelector="@(org => $"{org.City}")" />
+    <ColumnDefinition TItem="Organization" Title="Country" Property="Country"
+                      ValueSelector="@(org => $"{org.Country}")" />
+    <ColumnDefinition TItem="Organization" Title="Actions" Property="">
+        <Template Context="org">
+            <button class="btn btn-success me-2" @onclick="() => OpenUpdateModal(org)">
+                <i class="bi bi-pencil-square"></i>
+            </button>
+
+            <button class="btn btn-danger" @onclick="async () => await DeleteOrganization(org)">
+                <i class="bi bi-trash"></i>
+            </button>
+        </Template>
+    </ColumnDefinition>
+</DataGrid>
+<div class="modal fade @(ShowUpdateModal ? "show d-block" : "")" tabindex="-1"
+     style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Organization Details</h5>
+                <button type="button" class="btn-close" @onclick="CloseModal"></button>
+            </div>
+            <div class="modal-body">
+                @if (SelectedOrganization != null)
+                {
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Name
+                        </label>
+                        <input class="form-control" @bind="SelectedOrganization.Name" readonly="@IsReadOnly" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Email
+                        </label>
+                        <input class="form-control" @bind="SelectedOrganization.Email" readonly="@IsReadOnly" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label
+                            ">
+                            Phone Number
+                        </label>
+                        <input class="form-control" @bind="SelectedOrganization.PhoneNumber" readonly="@IsReadOnly" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label
+                            ">
+                            Street
+                        </label>
+                        <input class="form-control" @bind="SelectedOrganization.Street" readonly="@IsReadOnly" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label
+                            ">
+                            Street Number
+                        </label>
+                        <input class="form-control" @bind="SelectedOrganization.StreetNumber" readonly="@IsReadOnly" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label
+                            ">
+                            City
+                        </label>
+                        <input class="form-control" @bind="SelectedOrganization.City" readonly="@IsReadOnly" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label                    ">
+                            Country
+                        </label>
+                        <input class="form-control" @bind="SelectedOrganization.Country" readonly="@IsReadOnly" />
+                    </div>
+                }
+
+            </div>
+            <div class="modal-footer">
+                @if (IsReadOnly)
+                {
+                    <button class="btn btn-primary" @onclick="EnableEditing">Edit</button>
+                }
+                else
+                {
+                    <button class="btn btn-success" @onclick="SaveChanges">Save</button>
+                    <button class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<Organization> Organizations { get; set; } = new List<Organization>();
+    [Parameter]
+    public List<Member> Members { get; set; } = new List<Member>();
+    private bool ShowUpdateModal = false;
+    private bool IsReadOnly = true;
+    private Organization? SelectedOrganization { get; set; } = new Organization();
+
+    private async Task DeleteOrganization(Organization organization)
+    {
+        var success = await OrganizationService.DeleteAsync(organization.Id);
+        if (success)
+        {
+            Organizations.Remove(organization);
+            ToastService.ShowToast("Organization deleted successfully!", "text-bg-danger");
+        }
+        else
+        {
+            ToastService.ShowToast("Failed to delete organization!", "text-bg-danger");
+        }
+    }
+
+    private RenderFragment RenderActions(Organization organization) => builder =>
+    {
+        var seq = 0;
+        builder.OpenElement(seq++, "button");
+        builder.AddAttribute(seq++, "type", "button");
+        builder.AddAttribute(seq++, "class", "btn btn-success");
+        builder.AddContent(seq++, (MarkupString)"<i class='bi bi-pencil-square'></i>");
+        builder.CloseElement();
+
+        builder.OpenElement(seq++, "button");
+        builder.AddAttribute(seq++, "type", "button");
+        builder.AddAttribute(seq++, "class", "btn btn-danger ms-2");
+        builder.AddContent(seq++, (MarkupString)"<i class='bi bi-trash'></i>");
+        builder.CloseElement();
+    };
+
+    private void OpenUpdateModal(Organization org)
+    {
+        SelectedOrganization = new Organization
+        {
+            Id = org.Id,
+            Name = org.Name,
+            PresidentId = org.PresidentId,
+            Email = org.Email,
+            PhoneNumber = org.PhoneNumber,
+            Street = org.Street,
+            StreetNumber = org.StreetNumber,
+            City = org.City,
+            Country = org.Country,
+        };
+        IsReadOnly = true;
+        ShowUpdateModal = true;
+    }
+
+    private void EnableEditing()
+    {
+        IsReadOnly = false;
+    }
+
+    private void CloseModal()
+    {
+        ShowUpdateModal = false;
+    }
+
+    private async Task SaveChanges()
+    {
+        if (SelectedOrganization != null)
+        {
+            var updated = await OrganizationService.UpdateAsync(SelectedOrganization);
+            var index = Organizations.FindIndex(o => o.Id == SelectedOrganization.Id);
+            if (index >= 0)
+                Organizations[index] = updated;
+
+            ToastService.ShowToast("Organization updated successfully!", "text-bg-success");
+        }
+        ShowUpdateModal = false;
+    }
+}

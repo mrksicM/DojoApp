@@ -59,7 +59,6 @@ namespace BlazorApp.Models
         public DateTime? NoteCreatedAt { get; set; }
         public int? NoteCreatedByMemberId { get; set; }
 
-
         public bool IsActive { get; set; } = true;
 
         //Constructors

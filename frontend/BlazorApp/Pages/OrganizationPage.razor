@@ -1,0 +1,34 @@
+@page "/Organizations"
+@inject ICrudService<Organization> OrganizationService
+@inject ICrudService<Member> MemberService
+@using BlazorApp.Interfaces
+@using BlazorApp.Models
+@using BlazorApp.Components.Organizations
+@using BlazorApp.Services
+
+<h3>Organization Management</h3>
+
+<OrganizationForm OnOrganizationCreated="AddOrganization" Members="@Members" />
+<div class="border-top my-3"></div>
+<OrganizationTable Organizations="@Organizations" Members="@Members" />
+
+@code {
+    private List<Organization> Organizations = new();
+    private List<Member> Members = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Organizations = (await OrganizationService.GetAllAsync()).ToList();
+        Members = (await MemberService.GetAllAsync()).ToList();
+
+    }
+
+    private async Task AddOrganization(Organization Organization)
+    {
+        var created = await OrganizationService.CreateAsync(Organization);
+        if (created is not null)
+        {
+            Organizations.Add(created);
+        }
+    }
+}
