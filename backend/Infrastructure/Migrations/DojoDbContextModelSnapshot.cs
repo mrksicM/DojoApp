@@ -160,8 +160,9 @@ namespace Infrastructure.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<int>("StreetNumber")
-                                .HasColumnType("int");
+                            b1.Property<string>("StreetNumber")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("AikidoEventId");
 
@@ -201,7 +202,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Dojo", b =>
                 {
-                    b.HasOne("Domain.Entities.Member", null)
+                    b.HasOne("Domain.Entities.Member", "DojoCho")
                         .WithMany()
                         .HasForeignKey("DojoChoId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -228,8 +229,9 @@ namespace Infrastructure.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<int>("StreetNumber")
-                                .HasColumnType("int");
+                            b1.Property<string>("StreetNumber")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("DojoId");
 
@@ -265,6 +267,8 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Contact")
                         .IsRequired();
+
+                    b.Navigation("DojoCho");
                 });
 
             modelBuilder.Entity("Domain.Entities.Member", b =>
@@ -325,8 +329,9 @@ namespace Infrastructure.Migrations
                                         .IsRequired()
                                         .HasColumnType("nvarchar(max)");
 
-                                    b2.Property<int>("StreetNumber")
-                                        .HasColumnType("int");
+                                    b2.Property<string>("StreetNumber")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(max)");
 
                                     b2.HasKey("PersonalInfoMemberId");
 
@@ -403,9 +408,6 @@ namespace Infrastructure.Migrations
                             b1.Property<DateTime>("DateOfJoining")
                                 .HasColumnType("datetime2");
 
-                            b1.Property<int>("DojoId")
-                                .HasColumnType("int");
-
                             b1.Property<int>("Rank")
                                 .HasColumnType("int");
 
@@ -422,6 +424,9 @@ namespace Infrastructure.Migrations
 
                             b1.OwnsMany("Domain.ValueObjects.Note", "Notes", b2 =>
                                 {
+                                    b2.Property<int>("TraineeInfoMemberId")
+                                        .HasColumnType("int");
+
                                     b2.Property<int>("Id")
                                         .ValueGeneratedOnAdd()
                                         .HasColumnType("int");
@@ -432,23 +437,18 @@ namespace Infrastructure.Migrations
                                         .IsRequired()
                                         .HasColumnType("nvarchar(max)");
 
-                                    b2.Property<DateTime>("CreatedAt")
+                                    b2.Property<DateTime?>("CreatedAt")
                                         .HasColumnType("datetime2");
 
-                                    b2.Property<int>("CreatedByMemberId")
+                                    b2.Property<int?>("CreatedByMemberId")
                                         .HasColumnType("int");
 
-                                    b2.Property<int>("TraineeInfoId")
-                                        .HasColumnType("int");
-
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("TraineeInfoId");
+                                    b2.HasKey("TraineeInfoMemberId", "Id");
 
                                     b2.ToTable("Note");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("TraineeInfoId");
+                                        .HasForeignKey("TraineeInfoMemberId");
                                 });
 
                             b1.Navigation("Notes");
@@ -482,8 +482,9 @@ namespace Infrastructure.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<int>("StreetNumber")
-                                .HasColumnType("int");
+                            b1.Property<string>("StreetNumber")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("OrganizationId");
 

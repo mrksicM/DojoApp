@@ -34,12 +34,31 @@ namespace Application.Handlers.Organization
                 {
                     Id = d.Id,
                     Name = d.Name,
-                    Contact = d.Contact,
-                    Address = d.Address,
-                    DojoChoId = d.DojoChoId
+                    Street = d.Address?.Street ?? "",
+                    StreetNumber = d.Address?.StreetNumber ?? "",
+                    City = d.Address?.City ?? "",
+                    Country = d.Address?.Country ?? "",
+                    Email = d.Contact?.Email ?? "",
+                    PhoneNumber = d.Contact?.PhoneNumber ?? "",
+                    DojoChoId = d.DojoChoId,
+                    Members = d.Members.Select(m => new MembersDTO
+                    {
+                        Id = m.Id,
+                        FirstName = m.Name.FirstName,
+                        LastName = m.Name.LastName,
+                        DateOfBirth = m.PersonalInfo.DateOfBirth,
+                        Email = m.PersonalInfo.Contact?.Email ?? "",
+                        PhoneNumber = m.PersonalInfo.Contact?.PhoneNumber ?? "",
+                        Street = m.PersonalInfo.Address?.Street ?? "",
+                        StreetNumber = m.PersonalInfo.Address?.StreetNumber ?? "",
+                        City = m.PersonalInfo.Address?.City ?? "",
+                        Country = m.PersonalInfo.Address?.Country ?? "",
+                        ParentFirstName = m.PersonalInfo.ParentName?.FirstName,
+                        ParentLastName = m.PersonalInfo.ParentName?.LastName,
+                        IsActive = m.IsActive
+                    }).ToList()
                 }).ToList()
             };
-
         }
 
         public async Task<IEnumerable<OrganizationDTO>> Handle(GetAllOrganizationsQuery query)
@@ -61,8 +80,12 @@ namespace Application.Handlers.Organization
                 {
                     Id = d.Id,
                     Name = d.Name,
-                    Contact = d.Contact,
-                    Address = d.Address,
+                    Street = d.Address?.Street ?? "",
+                    StreetNumber = d.Address?.StreetNumber ?? "",
+                    City = d.Address?.City ?? "",
+                    Country = d.Address?.Country ?? "",
+                    Email = d.Contact?.Email ?? "",
+                    PhoneNumber = d.Contact?.PhoneNumber ?? "",
                     DojoChoId = d.DojoChoId
                 }).ToList()
             }).ToList();

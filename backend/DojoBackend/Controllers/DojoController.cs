@@ -1,6 +1,6 @@
 using Application.Commands.Dojo;
 using Application.DTOs;
-using Application.Handlers.Dojo;
+using Application.Handlers.Dojos;
 using Application.Queries.Dojos;
 using Microsoft.AspNetCore.Mvc;
 namespace DojoBackend.Controllers
@@ -23,20 +23,44 @@ namespace DojoBackend.Controllers
             _updateHandler = updateHandler;
         }
 
+        // [HttpPost]
+        // public async Task<IActionResult> Create(DojoDTO dto)
+        // {
+        //     var dojo = await _createHandler.Handle(new CreateDojoCommand(dto));
+        //     return CreatedAtAction(nameof(GetById), new { id = dojo.Id }, dojo);
+        // }
+
         [HttpPost]
-        public async Task<IActionResult> Create(DojoDTO dto)
+        public async Task<IActionResult> Create([FromBody] DojoDTO dto)
         {
-            var dojo = await _createHandler.Handle(new CreateDojoCommand(dto));
-            return CreatedAtAction(nameof(GetById), new { id = dojo.Id }, dojo);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var cmd = new CreateDojoCommand(dto);
+            var created = await _createHandler.Handle(cmd);
+
+            if (created == null) return BadRequest();
+
+            return Ok(created);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var dojo = await _getByIdHandler.Handle(new GetDojoByIdQuery(id));
-            if (dojo == null)                
+            if (dojo == null)
                 return NotFound();
             return Ok(dojo);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var dojos = await _getByIdHandler.Handle(new GetAllDojosQuery());
+            return Ok(dojos);
         }
 
         [HttpDelete("{id}")]
@@ -57,16 +81,50 @@ namespace DojoBackend.Controllers
             var cmd = new UpdateDojoCommand(
                 dto.Id,
                 dto.Name,
-                dto.Contact,
-                dto.Address,
+                dto.Street,
+                dto.StreetNumber,
+                dto.City,
+                dto.Country,
+                dto.Email,
+                dto.PhoneNumber,
                 dto.DojoChoId,
+                dto.DojoChoName,
                 dto.Members
             );
 
             var success = await _updateHandler.Handle(cmd);
             if (!success) return NotFound();
 
-            return NoContent();
+            return Ok(dto);
+        }
+
+        // GET /api/dojo/{id}/members
+        [HttpGet("{id}/members")]
+        public async Task<IActionResult> GetMembers(int id)
+        {
+            var dojo = await _getByIdHandler.Handle(new GetDojoByIdQuery(id));
+
+            if (dojo == null)
+                return NotFound();
+
+            var members = dojo.Members.Select(m => new MembersDTO
+            {
+                Id = m.Id,
+                FirstName = m.FirstName,
+                LastName = m.LastName,
+                DateOfBirth = m.DateOfBirth,
+                Email = m.Email ?? "",
+                PhoneNumber = m.PhoneNumber ?? "",
+                Street = m.Street ?? "",
+                StreetNumber = m.StreetNumber ?? "",
+                City = m.City ?? "",
+                Country = m.Country ?? "",
+                ParentFirstName = m.ParentFirstName ?? "",
+                ParentLastName = m.ParentLastName ?? "",
+                IsActive = m.IsActive
+            }).ToList();
+
+            return Ok(members);
         }
     }
 }

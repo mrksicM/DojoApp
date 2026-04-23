@@ -23,6 +23,9 @@ namespace Infrastructure.Repositories
                 // Global query filter for logical deletion
                 builder.HasQueryFilter(m => m.IsActive);
 
+                // Name as an owned type
+                builder.OwnsOne(m => m.Name);
+
                 // PersonalInfo as an owned type
                 builder.OwnsOne(m => m.PersonalInfo, pi =>
                 {
@@ -35,19 +38,10 @@ namespace Infrastructure.Repositories
                 builder.OwnsOne(m => m.TraineeInfo, ti =>
                 {
                     // Notes as owned collection
-                    ti.OwnsMany(t => t.Notes, nb =>
-                    {
-                        nb.WithOwner().HasForeignKey("TraineeInfoId");
-                        nb.HasKey(n => n.Id);
-                        nb.Property(n => n.Content).IsRequired();
-                        nb.Property(n => n.CreatedAt).IsRequired();
-                        nb.Property(n => n.CreatedByMemberId).IsRequired();
-                    });
+                    ti.OwnsMany(t => t.Notes);
                 });
-
-                // Name as an owned type
-                builder.OwnsOne(m => m.Name);
             });
+
             // Dojo
             modelBuilder.Entity<Dojo>(builder =>
             {
@@ -55,8 +49,9 @@ namespace Infrastructure.Repositories
                 builder.OwnsOne(d => d.Contact);
                 builder.OwnsOne(d => d.Address);
 
-                builder.HasOne<Member>()
-                    .WithMany()
+                // DojoCho relationship
+                builder.HasOne(d => d.DojoCho)
+                    .WithMany()                          // a Member can be dojo-cho of multiple dojos
                     .HasForeignKey(d => d.DojoChoId)
                     .OnDelete(DeleteBehavior.Restrict);
             });

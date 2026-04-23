@@ -35,3 +35,86 @@ VALUES
 
 ALTER TABLE Members
 ALTER COLUMN PersonalInfo_Address_StreetNumber nvarchar(max) NOT NULL;
+
+INSERT INTO dbo.Organizations
+(
+    Name,
+    PresidentId,
+    Contact_Email,
+    Contact_PhoneNumber,
+    Address_Street,
+    Address_StreetNumber,
+    Address_City,
+    Address_Country
+)
+VALUES
+('Central Aikido Dojo', 9, 'contact@central-aikido.com', '555-0201', '100 Main Street', 100, 'Tokyo', 'Japan'),
+('East Side Aikido Club', 6, 'info@eastside-aikido.com', '555-0202', '250 Oak Avenue', 250, 'Osaka', 'Japan');
+
+
+-- Step 1: Delete existing data
+DELETE FROM dbo.Organizations;
+
+-- Step 2: Alter the column data type
+ALTER TABLE dbo.Organizations
+ALTER COLUMN Address_StreetNumber nvarchar(max) NOT NULL;
+
+-- Step 3: Re-insert the data with street numbers as text
+INSERT INTO dbo.Organizations
+(
+    Name,
+    PresidentId,
+    Contact_Email,
+    Contact_PhoneNumber,
+    Address_Street,
+    Address_StreetNumber,
+    Address_City,
+    Address_Country
+)
+VALUES
+('Central Aikido Dojo', 12, 'contact@central-aikido.com', '555-0201', '100 Main Street', '100', 'Tokyo', 'Japan'),
+('East Side Aikido Club', 9, 'info@eastside-aikido.com', '555-0202', '250 Oak Avenue', '250', 'Osaka', 'Japan');
+
+INSERT INTO [DojoAppDB].[dbo].[Dojos]
+       ([Name],
+        [Contact_Email],
+        [Contact_PhoneNumber],
+        [Address_Street],
+        [Address_StreetNumber],
+        [Address_City],
+        [Address_Country],
+        [DojoChoId],
+        [OrganizationId])
+VALUES ('Central Dojo',
+        'centraldojo@example.com',
+        '+381234567',
+        'Main Street',
+        '12',
+        'Novi Sad',
+        'Serbia',
+        9,   -- Member Id (dojocho)
+        1);   -- Organization Id
+
+INSERT INTO [DojoAppDB].[dbo].[Dojos]
+       ([Name],
+        [Contact_Email],
+        [Contact_PhoneNumber],
+        [Address_Street],
+        [Address_StreetNumber],
+        [Address_City],
+        [Address_Country],
+        [DojoChoId],
+        [OrganizationId])
+VALUES ('West Dojo',
+        'westdojo@example.com',
+        '+381987654',
+        'West Avenue',
+        '9',
+        'Belgrade',
+        'Serbia',
+        6,    -- Member Id (dojocho)
+        2);   -- Organization Id
+DELETE FROM [DojoAppDB].[dbo].[Dojos];
+
+ALTER TABLE [DojoAppDB].[dbo].[Dojos]
+ALTER COLUMN [Address_StreetNumber] NVARCHAR(50) NOT NULL;

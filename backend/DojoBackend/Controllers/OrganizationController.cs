@@ -75,9 +75,26 @@ namespace DojoBackend.Controllers
                 {
                     Id = d.Id,
                     Name = d.Name,
-                    Contact = d.Contact,
-                    Address = d.Address,
-                    DojoChoId = d.DojoChoId
+                    Street = d.Street,
+                    StreetNumber = d.StreetNumber,
+                    City = d.City,
+                    Country = d.Country,
+                    Email = d.Email,
+                    PhoneNumber = d.PhoneNumber,
+                    DojoChoId = d.DojoChoId,
+                    Members = d.Members.Select(m => new MembersDTO
+                    {
+                        Id = m.Id,
+                        FirstName = m.FirstName,
+                        LastName = m.LastName,
+                        Street = m.Street,
+                        StreetNumber = m.StreetNumber,
+                        City = m.City,
+                        Country = m.Country,
+                        Email = m.Email,
+                        PhoneNumber = m.PhoneNumber,
+                        DateOfBirth = m.DateOfBirth
+                    }).ToList()
                 }).ToList()
             );
 
@@ -106,8 +123,12 @@ namespace DojoBackend.Controllers
                 {
                     Id = d.Id,
                     Name = d.Name,
-                    Contact = d.Contact,
-                    Address = d.Address,
+                    Street = d.Street,
+                    StreetNumber = d.StreetNumber,
+                    City = d.City,
+                    Country = d.Country,
+                    Email = d.Email,
+                    PhoneNumber = d.PhoneNumber,
                     DojoChoId = d.DojoChoId
                 }).ToList()
             }).ToList();

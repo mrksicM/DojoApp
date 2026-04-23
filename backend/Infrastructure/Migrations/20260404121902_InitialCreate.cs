@@ -21,7 +21,7 @@ namespace Infrastructure.Migrations
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Address_Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address_StreetNumber = table.Column<int>(type: "int", nullable: false),
+                    Address_StreetNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address_Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Contact_Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -47,7 +47,7 @@ namespace Infrastructure.Migrations
                     Contact_Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Contact_PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address_Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address_StreetNumber = table.Column<int>(type: "int", nullable: false),
+                    Address_StreetNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address_Country = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -66,7 +66,7 @@ namespace Infrastructure.Migrations
                     Contact_Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Contact_PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address_Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address_StreetNumber = table.Column<int>(type: "int", nullable: false),
+                    Address_StreetNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address_Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DojoChoId = table.Column<int>(type: "int", nullable: false),
@@ -92,7 +92,7 @@ namespace Infrastructure.Migrations
                     Name_FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name_LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PersonalInfo_Address_Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PersonalInfo_Address_StreetNumber = table.Column<int>(type: "int", nullable: false),
+                    PersonalInfo_Address_StreetNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PersonalInfo_Address_City = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PersonalInfo_Address_Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PersonalInfo_Contact_Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -105,7 +105,6 @@ namespace Infrastructure.Migrations
                     TraineeInfo_Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TraineeInfo_DateOfJoining = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TraineeInfo_AikidoId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TraineeInfo_DojoId = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     DojoId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -149,17 +148,17 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TraineeInfoMemberId = table.Column<int>(type: "int", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedByMemberId = table.Column<int>(type: "int", nullable: false),
-                    TraineeInfoId = table.Column<int>(type: "int", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedByMemberId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Note", x => x.Id);
+                    table.PrimaryKey("PK_Note", x => new { x.TraineeInfoMemberId, x.Id });
                     table.ForeignKey(
-                        name: "FK_Note_Members_TraineeInfoId",
-                        column: x => x.TraineeInfoId,
+                        name: "FK_Note_Members_TraineeInfoMemberId",
+                        column: x => x.TraineeInfoMemberId,
                         principalTable: "Members",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -184,11 +183,6 @@ namespace Infrastructure.Migrations
                 name: "IX_Members_DojoId",
                 table: "Members",
                 column: "DojoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Note_TraineeInfoId",
-                table: "Note",
-                column: "TraineeInfoId");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Dojos_Members_DojoChoId",

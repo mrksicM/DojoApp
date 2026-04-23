@@ -1,3 +1,4 @@
+using Application.Handlers.Dojos;
 using Application.Handlers.Members;
 using Application.Handlers.Organization;
 using Domain.Interfaces;
@@ -7,59 +8,60 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-Console.WriteLine("ConnStr: " + builder.Configuration.GetConnectionString("DefaultConnection"));
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine("ConnStr: " + connectionString);
+
 builder.Services.AddDbContext<DojoDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionString));
 
 // Register repositories
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+builder.Services.AddScoped<IDojoRepository, DojoRepository>();
 
 // Register handlers
-// Members
 builder.Services.AddScoped<CreateMemberHandler>();
 builder.Services.AddScoped<GetMemberHandler>();
 builder.Services.AddScoped<DeleteMemberHandler>();
 builder.Services.AddScoped<UpdateMemberHandler>();
 
-// Organizations
 builder.Services.AddScoped<CreateOrganizationHandler>();
 builder.Services.AddScoped<GetOrganizationHandler>();
 builder.Services.AddScoped<DeleteOrganizationHandler>();
 builder.Services.AddScoped<UpdateOrganizationHandler>();
 
-// Register services
+builder.Services.AddScoped<CreateDojoHandler>();
+builder.Services.AddScoped<GetDojoHandler>();
+builder.Services.AddScoped<DeleteDojoHandler>();
+builder.Services.AddScoped<UpdateDojoHandler>();
+
+// Controllers
 builder.Services.AddControllers();
 
-// Add CORS
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowBlazorClient",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:5233") // Blazor dev server origin
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowBlazorClient", policy =>
+    {
+        policy.WithOrigins("http://localhost:5233")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
-// Use CORS
 app.UseCors("AllowBlazorClient");
-
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
-// Map controllers
 app.MapControllers();
 
 app.Run();

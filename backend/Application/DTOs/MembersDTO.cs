@@ -36,6 +36,7 @@ namespace Application.DTOs
         public string Belt { get; set; } = "";
         public string Role { get; set; } = "";
         public DateTime DateOfJoining { get; set; }
+        public int DojoId { get; set; }
         public string AikidoId { get; set; } = "";
         public string? NoteContent { get; set; }
         public DateTime? NoteCreatedAt { get; set; }

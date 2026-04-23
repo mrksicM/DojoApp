@@ -1,0 +1,106 @@
+@using BlazorApp.Interfaces
+@using BlazorApp.Models
+@using BlazorApp.Services
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Linq;
+@inject ICrudService<Organization> OrganizationService
+
+<EditForm Model="@newDojo" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Name:</label>
+        <InputText @bind-Value="newDojo.Name" class="form-control w-auto" />
+    </div>
+
+    <!-- Organization dropdown -->
+    <div class="mb-3">
+        <label for="organization">Organization</label>
+        <InputSelect id="organization" @bind-Value="SelectedOrganizationId" class="form-select w-auto">
+            <option value="">-- select organization --</option>
+            @foreach (var org in OrganizationList)
+            {
+                <option value="@org.Id">@org.Name</option>
+            }
+        </InputSelect>
+    </div>
+
+    <!-- DojoCho dropdown -->
+    <div class="mb-3">
+        <label for="dojocho">Dojo Cho</label>
+        <InputSelect id="dojocho" @bind-Value="newDojo.DojoChoId" class="form-select w-auto">
+            <option value="">-- select dojo cho --</option>
+            @foreach (var member in DojoChoList)
+            {
+                <option value="@member.Id">@member.FirstName @member.LastName</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="mb-3">
+        <label>Street:</label>
+        <InputText @bind-Value="newDojo.Street" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>Street Number:</label>
+        <InputText @bind-Value="newDojo.StreetNumber" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>City:</label>
+        <InputText @bind-Value="newDojo.City" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>Country:</label>
+        <InputText @bind-Value="newDojo.Country" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>Email:</label>
+        <InputText @bind-Value="newDojo.Email" class="form-control w-auto" />
+    </div>
+    <div class="mb-3">
+        <label>Phone Number:</label>
+        <InputText @bind-Value="newDojo.PhoneNumber" class="form-control w-auto" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mb-3">Create Dojo</button>
+</EditForm>
+
+@code {
+    private Dojo newDojo = new();
+    [Inject] private ICrudService<Dojo> DojoService { get; set; } = default!;
+    [Parameter] public List<Member> DojoChoList { get; set; } = new();
+    [Parameter] public List<Organization> OrganizationList { get; set; } = new();
+    [Parameter] public EventCallback<Dojo> OnDojoCreated { get; set; }
+
+    private int SelectedOrganizationId { get; set; }
+
+    private async Task HandleValidSubmit()
+    {
+        
+        var createdDojo = await DojoService.CreateAsync(newDojo);
+        if (createdDojo is not null)
+        {
+            var DojoList = await DojoService.GetAllAsync();
+            // attach dojo to organization
+            var org = OrganizationList.FirstOrDefault(o => o.Id == SelectedOrganizationId);
+            if (org != null)
+            {
+                org.DojoIds.Add(createdDojo.Id);
+                await OrganizationService.UpdateAsync(org);
+            }
+
+            // Update the dojo-cho member to belong to this dojo
+            var dojoCho = DojoChoList.FirstOrDefault(m => m.Id == createdDojo.DojoChoId);
+            var oldDojo = DojoList.FirstOrDefault(d => d.Members.Any(m => m.Id == dojoCho.Id));
+            if (oldDojo != null)
+            {
+                oldDojo.Members.Remove(dojoCho);
+                await DojoService.UpdateAsync(oldDojo);
+            }
+
+            await OnDojoCreated.InvokeAsync(createdDojo);
+            newDojo = new(); // reset form
+        }
+    }
+}

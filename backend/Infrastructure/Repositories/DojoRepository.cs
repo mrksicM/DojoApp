@@ -20,8 +20,12 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Dojo?> GetByIdAsync(int id) =>
-            await _context.Dojos.FindAsync(id);
+        public async Task<Dojo?> GetByIdAsync(int id)
+        {
+            return await _context.Dojos
+                                 .Include(d => d.Members)
+                                 .FirstOrDefaultAsync(d => d.Id == id);
+        }
 
         public async Task<List<Dojo>> GetAllAsync()
         {

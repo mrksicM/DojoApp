@@ -1,0 +1,38 @@
+@page "/Dojos"
+@inject ICrudService<Dojo> DojoService
+@inject ICrudService<Member> MemberService
+@inject ICrudService<Organization> OrganizationService
+@using BlazorApp.Interfaces
+@using BlazorApp.Models
+@using BlazorApp.Components.Dojos
+@using BlazorApp.Services
+
+
+<h3>Dojo Management</h3>
+
+<DojoForm OnDojoCreated="AddDojo" DojoChoList="@Members" OrganizationList="@Organizations" />
+<div class="border-top my-3"></div>
+<DojoTable DojoList="@DojoList" />
+
+@code {
+    private List<Dojo> DojoList = new();
+    private List<Member> Members = new();
+    private List<Organization> Organizations = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        DojoList = (await DojoService.GetAllAsync()).ToList();
+        Members = (await MemberService.GetAllAsync()).ToList();
+        Organizations = (await OrganizationService.GetAllAsync()).ToList();
+    }
+
+    private async Task AddDojo(Dojo Dojo)
+    {
+        var created = await DojoService.CreateAsync(Dojo);
+        if (created is not null)
+        {
+            DojoList.Add(created);
+        }
+    }
+}

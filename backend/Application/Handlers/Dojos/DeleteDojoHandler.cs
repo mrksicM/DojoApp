@@ -1,7 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Application.Commands.Dojo;
 using Domain.Interfaces;
 
-namespace Application.Handlers.Dojo
+namespace Application.Handlers.Dojos
 {
     public class DeleteDojoHandler
     {
@@ -11,7 +15,6 @@ namespace Application.Handlers.Dojo
         {
             _repo = repo;
         }
-
         public async Task Handle(DeleteDojoCommand cmd)
         {
             await _repo.DeleteAsync(cmd.Id);

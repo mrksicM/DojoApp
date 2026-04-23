@@ -39,9 +39,8 @@ namespace DojoBackend.Controllers
             if (created == null) return BadRequest();
 
             return Ok(created);
-
-
         }
+
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {

@@ -4,7 +4,7 @@ using BlazorApp.Models;
 
 namespace BlazorApp.Services
 {
-    public class MemberService : ICrudService<Member>
+    public class MemberService : ICrudService<Member>, IMembersService
     {
         private readonly HttpClient _http;
 
@@ -42,6 +42,12 @@ namespace BlazorApp.Services
         {
             var response = await _http.DeleteAsync($"api/members/{id}");
             return response.IsSuccessStatusCode;
+        }
+
+        public async Task<IEnumerable<Member>> GetMembersOfDojo(int dojoId)
+        {
+            return await _http.GetFromJsonAsync<IEnumerable<Member>>($"api/dojo/{dojoId}/members")
+                   ?? Enumerable.Empty<Member>();
         }
     }
 }

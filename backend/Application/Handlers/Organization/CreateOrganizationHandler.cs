@@ -39,8 +39,18 @@ namespace Application.Handlers.Organization
                 {
                     Id = d.Id,
                     Name = d.Name,
-                    Contact = d.Contact,
-                    Address = d.Address,
+                    Address = new Address
+                    {
+                        Street = d.Street,
+                        StreetNumber = d.StreetNumber,
+                        City = d.City,
+                        Country = d.Country
+                    },
+                    Contact = new Contact
+                    {
+                        Email = d.Email,
+                        PhoneNumber = d.PhoneNumber
+                    },
                     DojoChoId = d.DojoChoId,
                     Members = d.Members.Select(m => new Member
                     {
@@ -87,8 +97,12 @@ namespace Application.Handlers.Organization
                 {
                     Id = d.Id,
                     Name = d.Name,
-                    Contact = d.Contact,
-                    Address = d.Address,
+                    Street = d.Address.Street,
+                    StreetNumber = d.Address.StreetNumber,
+                    City = d.Address.City,
+                    Country = d.Address.Country,
+                    Email = d.Contact.Email,
+                    PhoneNumber = d.Contact.PhoneNumber,
                     DojoChoId = d.DojoChoId,
                     Members = d.Members.Select(m => new MembersDTO
                     {

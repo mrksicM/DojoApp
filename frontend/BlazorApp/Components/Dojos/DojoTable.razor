@@ -1,0 +1,229 @@
+@using BlazorApp.Interfaces
+@using BlazorApp.Models
+@using BlazorApp.Components.Generic
+@using BlazorApp.Services
+@inject ToastService ToastService
+@inject ICrudService<Dojo> DojoService
+@inject ICrudService<Member> MemberService
+@inject IMembersService MembersService
+
+<DataGrid TItem="Dojo" Items="@DojoList">
+    <ColumnDefinition TItem="Dojo" Title="Name" Property="Name" ValueSelector="@(d => d.Name)" />
+    <ColumnDefinition TItem="Dojo" Title="Location" Property="Location"
+                      ValueSelector="@(d => $"{d.Street}, {d.StreetNumber}, {d.City}")" />
+    <ColumnDefinition TItem="Dojo" Title="Email" Property="Email" ValueSelector="@(d => d.Email)" />
+    <ColumnDefinition TItem="Dojo" Title="Phone" Property="PhoneNumber" ValueSelector="@(d => d.PhoneNumber)" />
+    <ColumnDefinition TItem="Dojo" Title="Dojo Cho" Property="DojoCho"
+                      ValueSelector="@(d => $"{d.Members?.FirstOrDefault(m => m.Id == d.DojoChoId)?.FirstName} {d.Members?.FirstOrDefault(m => m.Id == d.DojoChoId)?.LastName}")" />
+    <ColumnDefinition TItem="Dojo" Title="Actions">
+        <Template Context="dojo">
+            <button class="btn btn-primary me-2" @onclick="() => OpenUpdateModal(dojo)">Edit</button>
+            <button class="btn btn-danger me-2" @onclick="() => DeleteDojo(dojo.Id)">Delete</button>
+            <button class="btn btn-info" @onclick="() => ShowMembers(dojo)">Members</button>
+        </Template>
+    </ColumnDefinition>
+</DataGrid>
+
+@if (ShowMembersModal && SelectedDojoMembers.Any())
+{
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Members of @SelectedDojo?.Name</h5>
+                    <button type="button" class="btn-close" @onclick="CloseMembersModal"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Rank</th>
+                                <th>Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var member in SelectedDojoMembers)
+                            {
+                                <tr>
+                                    <td>@member.FirstName @member.LastName</td>
+                                    <td>@member.Email</td>
+                                    <td>@member.PhoneNumber</td>
+                                    <td>@member.Rank</td>
+                                    <td>@(member.IsActive ? "Yes" : "No")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="modal fade @(ShowUpdateModal ? "show d-block" : "")" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Dojo Details</h5>
+                <button type="button" class="btn-close" @onclick="CloseUpdateModal"></button>
+            </div>
+            <div class="modal-body">
+                @if (SelectedDojo != null)
+                {
+                    <EditForm Model="SelectedDojo">
+                        <div class="mb-3">
+                            <label>First Name:</label>
+                            <InputText @bind-Value="SelectedDojo.Name" class="form-control mb-2" readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Last Name:</label>
+                            <InputText @bind-Value="SelectedDojo.Street" class="form-control mb-2" readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Date of Birth:</label>
+                            <InputText @bind-Value="SelectedDojo.StreetNumber" class="form-control mb-2"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>City:</label>
+                            <InputText @bind-Value="SelectedDojo.City" class="form-control w-auto" readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Country:</label>
+                            <InputText @bind-Value="SelectedDojo.Country" class="form-control w-auto"
+                                       readonly="@IsReadOnly" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Phone Number:</label>
+                            <InputText @bind-Value="SelectedDojo.PhoneNumber" class="form-control mb-2"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Email:</label>
+                            <InputText @bind-Value="SelectedDojo.Email" class="form-control mb-2" readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Dojo Cho:</label>
+                            <p>@SelectedDojoDojoCho?.FirstName @SelectedDojoDojoCho?.LastName</p>
+                        </div>
+                    </EditForm>
+                }
+            </div>
+            <div class="modal-footer">
+                @if (IsReadOnly)
+                {
+                    <button class="btn btn-primary" @onclick="EnableEditing">Update</button>
+                }
+                else
+                {
+                    <button class="btn btn-success" @onclick="SaveChanges">Save</button>
+                }
+                <button class="btn btn-secondary" @onclick="CloseUpdateModal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<Dojo> DojoList { get; set; } = new();
+    private Dojo? SelectedDojo { get; set; }
+    private List<Member> SelectedDojoMembers { get; set; } = new();
+    private Member? SelectedDojoDojoCho { get; set; }
+    private bool ShowMembersModal = false;
+    private bool ShowUpdateModal = false;
+    private bool IsReadOnly = true;
+
+    private RenderFragment RenderActions(Dojo dojo) => builder =>
+    {
+        var seq = 0;
+        builder.OpenElement(seq++, "button");
+        builder.AddAttribute(seq++, "type", "button");
+        builder.AddAttribute(seq++, "class", "btn btn-success");
+        builder.AddContent(seq++, (MarkupString)"<i class='bi bi-pencil-square'></i>");
+        builder.CloseElement();
+
+        builder.OpenElement(seq++, "button");
+        builder.AddAttribute(seq++, "type", "button");
+        builder.AddAttribute(seq++, "class", "btn btn-danger ms-2");
+        builder.AddContent(seq++, (MarkupString)"<i class='bi bi-trash'></i>");
+        builder.CloseElement();
+    };
+
+    private async Task OpenUpdateModal(Dojo dojo)
+    {
+        SelectedDojoMembers = (await MembersService.GetMembersOfDojo(dojo.Id)).ToList();
+        SelectedDojo = new Dojo
+        {
+            Id = dojo.Id,
+            Name = dojo.Name,
+            Street = dojo.Street,
+            StreetNumber = dojo.StreetNumber,
+            City = dojo.City,
+            Email = dojo.Email,
+            PhoneNumber = dojo.PhoneNumber,
+            Country = dojo.Country,
+            Members = dojo.Members,
+            DojoChoId = dojo.DojoChoId,
+        };
+        SelectedDojoDojoCho = await MemberService.GetByIdAsync(SelectedDojo.DojoChoId);
+        IsReadOnly = true;
+        ShowUpdateModal = true;
+    }
+
+    private async Task ShowMembers(Dojo dojo)
+    {
+        SelectedDojo = dojo;
+        // Call your API endpoint: GET /api/dojo/{id}/members
+        SelectedDojoMembers = (await MembersService.GetMembersOfDojo(dojo.Id)).ToList();
+        ShowMembersModal = true;
+    }
+
+    private void EnableEditing()
+    {
+        IsReadOnly = false;
+    }
+
+    private void CloseUpdateModal()
+    {
+        ShowUpdateModal = false;
+    }
+
+    private void CloseMembersModal()
+    {
+        ShowMembersModal = false;
+        SelectedDojoMembers.Clear();
+    }
+
+    private async Task SaveChanges()
+    {
+        if (SelectedDojo != null)
+        {
+            var updated = await DojoService.UpdateAsync(SelectedDojo);
+            var index = DojoList.FindIndex(d => d.Id == SelectedDojo.Id);
+            if (index >= 0)
+                DojoList[index] = updated;
+
+            ToastService.ShowToast("Dojo updated successfully!", "text-bg-success");
+        }
+        ShowUpdateModal = false;
+    }
+
+    private async Task DeleteDojo(int dojoId)
+    {
+        var success = await DojoService.DeleteAsync(dojoId);
+        if (success)
+        {
+            DojoList.Remove(DojoList.FirstOrDefault(d => d.Id == dojoId));
+            ToastService.ShowToast("Dojo deleted successfully!", "text-bg-danger");
+        }
+        else
+        {
+            ToastService.ShowToast("Failed to delete dojo!", "text-bg-danger");
+        }
+    }
+}

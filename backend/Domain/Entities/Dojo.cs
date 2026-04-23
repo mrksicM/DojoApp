@@ -13,14 +13,15 @@ namespace Domain.Entities
         public required Contact Contact { get; set; }
         public required Address Address { get; set; }
         public required int DojoChoId { get; set; }
+        public Member DojoCho { get; set; }
         public List<Member> Members { get; set; } = new();
 
         public Dojo()
         {
-            
+
         }
 
-        public Dojo(int id, string name, Contact contact, Address address, List<Member> members, int dojoChoId)
+        public Dojo(int id, string name, Contact contact, Address address, List<Member> members, int dojoChoId, Member dojoCho)
         {
             Id = id;
             Name = name;
@@ -28,6 +29,7 @@ namespace Domain.Entities
             Address = address;
             Members = members;
             DojoChoId = dojoChoId;
+            DojoCho = dojoCho;
         }
     }
 }
