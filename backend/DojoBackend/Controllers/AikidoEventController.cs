@@ -8,18 +8,18 @@ namespace DojoBackend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AikidoEventController: ControllerBase
+    public class AikidoEventController : ControllerBase
     {
 
         private readonly CreateAikidoEventHandler _createHandler;
-        private readonly GetAikidoEventHandler _getByIdHandler;
+        private readonly GetAikidoEventHandler _getHandler;
         private readonly DeleteAikidoEventHandler _deleteHandler;
         private readonly UpdateAikidoEventHandler _updateHandler;
 
         public AikidoEventController(CreateAikidoEventHandler createHandler, GetAikidoEventHandler getByIdHandler, DeleteAikidoEventHandler deleteHandler, UpdateAikidoEventHandler updateHandler)
         {
             _createHandler = createHandler;
-            _getByIdHandler = getByIdHandler;
+            _getHandler = getByIdHandler;
             _deleteHandler = deleteHandler;
             _updateHandler = updateHandler;
         }
@@ -31,10 +31,17 @@ namespace DojoBackend.Controllers
             return CreatedAtAction(nameof(GetById), new { id = aikidoEvent.Id }, aikidoEvent);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var aikidoEvents = await _getHandler.Handle(new GetAllAikidoEventsQuery());
+            return Ok(aikidoEvents);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var aikidoEvent = await _getByIdHandler.Handle(new GetAikidoEventByIdQuery(id));
+            var aikidoEvent = await _getHandler.Handle(new GetAikidoEventByIdQuery(id));
             if (aikidoEvent == null)
                 return NotFound();
             return Ok(aikidoEvent);
@@ -43,7 +50,7 @@ namespace DojoBackend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var aikidoEvent = await _getByIdHandler.Handle(new GetAikidoEventByIdQuery(id));
+            var aikidoEvent = await _getHandler.Handle(new GetAikidoEventByIdQuery(id));
             if (aikidoEvent == null)
                 return NotFound();
             await _deleteHandler.Handle(new DeleteAikidoEventCommand(id));
@@ -60,12 +67,15 @@ namespace DojoBackend.Controllers
                 dto.Title,
                 dto.Type,
                 dto.Date,
-                dto.Address,
-                dto.Contact,
+                dto.Street,
+                dto.StreetNumber,
+                dto.City,
+                dto.Country,
+                dto.Email,
+                dto.PhoneNumber,
                 dto.Description,
                 dto.OrganizerId,
-                dto.PresenterId,
-                dto.AttendeesIds
+                dto.PresenterId
             );
 
             var success = await _updateHandler.Handle(cmd);
@@ -73,6 +83,6 @@ namespace DojoBackend.Controllers
 
             return NoContent();
         }
-        
+
     }
 }

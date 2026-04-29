@@ -1,0 +1,172 @@
+@using BlazorApp.Interfaces
+@using BlazorApp.Models
+@using BlazorApp.Services
+@inject ToastService ToastService
+@inject ICrudService<Member> MemberService
+@inject ICrudService<AikidoEvent> AikidoEventService
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Organizer</th>
+            <th>Presenter</th>
+            <th>Location</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ev in AikidoEventList)
+        {
+            <tr>
+                <td>@ev.Title</td>
+                <td>@ev.Date.ToShortDateString()</td>
+                <td>@ev.Organizer.FirstName @ev.Organizer.LastName</td>
+                <td>@ev.Presenter.FirstName @ev.Presenter.LastName</td>
+                <td>@ev.Street @ev.StreetNumber, @ev.City, @ev.Country</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" @onclick="() => OpenUpdateModal(ev)">Edit</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => DeleteEvent(ev.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade @(ShowUpdateModal ? "show d-block" : "")" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Aikido Event Details</h5>
+                <button type="button" class="btn-close" @onclick="CloseUpdateModal"></button>
+            </div>
+            <div class="modal-body">
+                @if (SelectedEvent != null)
+                {
+                    <EditForm Model="SelectedEvent">
+                        <div class="mb-3">
+                            <label>Title:</label>
+                            <InputText @bind-Value="SelectedEvent.Title" class="form-control mb-2" readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Date:</label>
+                            <InputDate @bind-Value="SelectedEvent.Date" class="form-control mb-2" readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Organizer:</label>
+                            <InputSelect id="organizer" @bind-Value="SelectedEvent.OrganizerId" class="form-select w-auto"
+                                         disabled="@IsReadOnly">
+                                <option value="">-- select organizer --</option>
+                                @foreach (var member in MembersList)
+                                {
+                                    <option value="@member.Id">@member.FirstName @member.LastName</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="mb-3">
+                            <label>Presenter:</label>
+                            <InputSelect id="presenter" @bind-Value="SelectedEvent.PresenterId" class="form-select w-auto"
+                                         disabled="@IsReadOnly">
+                                <option value="">-- select presenter --</option>
+                                @foreach (var member in MembersList)
+                                {
+                                    <option value="@member.Id">@member.FirstName @member.LastName</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="mb-3">
+                            <label>Street:</label>
+                            <InputText @bind-Value="SelectedEvent.Street" class="form-control mb-2"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Street Number:</label>
+                            <InputText @bind-Value="SelectedEvent.StreetNumber" class="form-control mb-2"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>City:</label>
+                            <InputText @bind-Value="SelectedEvent.City" class="form-control mb-2" readonly="@IsReadOnly" />
+                        </div>
+                        <div class="mb-3">
+                            <label>Country:</label>
+                            <InputText @bind-Value="SelectedEvent.Country" class="form-control mb-2"
+                                       readonly="@IsReadOnly" />
+                        </div>
+                    </EditForm>
+                }
+            </div>
+            <div class="modal-footer">
+                @if (IsReadOnly)
+                {
+                    <button class="btn btn-primary" @onclick="EnableEditing">Update</button>
+                }
+                else
+                {
+                    <button class="btn btn-success" @onclick="SaveChanges">Save</button>
+                }
+                <button class="btn btn-secondary" @onclick="CloseUpdateModal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<AikidoEvent> AikidoEventList { get; set; } = new();
+    private AikidoEvent? SelectedEvent { get; set; }
+    [Parameter] public List<Member> MembersList { get; set; } = new();
+    [Parameter] public List<Dojo> DojoList { get; set; } = new();
+    [Parameter] public List<Organization> OrganizationList { get; set; } = new();
+    private bool ShowUpdateModal = false;
+    private bool IsReadOnly = true;
+
+    private async Task SaveChanges()
+    {
+        if (SelectedEvent != null)
+        {
+            var updated = await AikidoEventService.UpdateAsync(SelectedEvent);
+            var index = AikidoEventList.FindIndex(e => e.Id == SelectedEvent.Id);
+            if (index >= 0)
+                AikidoEventList[index] = updated;
+
+            ToastService.ShowToast("Event updated successfully!", "text-bg-success");
+        }
+        ShowUpdateModal = false;
+    }
+
+    private void OpenUpdateModal(AikidoEvent ev)
+    {
+        SelectedEvent = new AikidoEvent
+        {
+            Id = ev.Id,
+            Title = ev.Title,
+            Date = ev.Date,
+            Street = ev.Street,
+            StreetNumber = ev.StreetNumber,
+            City = ev.City,
+            Country = ev.Country,
+            Email = ev.Email,
+            PhoneNumber = ev.PhoneNumber,
+            Description = ev.Description,
+            OrganizerId = ev.OrganizerId,
+            PresenterId = ev.PresenterId,
+            Organizer = ev.Organizer,
+            Presenter = ev.Presenter
+        };
+
+        IsReadOnly = true;
+        ShowUpdateModal = true;
+    }
+
+    private void EnableEditing() => IsReadOnly = false;
+
+    private void CloseUpdateModal() => ShowUpdateModal = false;
+
+    private async Task DeleteEvent(int eventId)
+    {
+        await AikidoEventService.DeleteAsync(eventId);
+        AikidoEventList.RemoveAll(e => e.Id == eventId);
+    }
+}
+
+

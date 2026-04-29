@@ -218,7 +218,11 @@
         var success = await DojoService.DeleteAsync(dojoId);
         if (success)
         {
-            DojoList.Remove(DojoList.FirstOrDefault(d => d.Id == dojoId));
+            var dojoToRemove = DojoList.FirstOrDefault(d => d.Id == dojoId);
+            if (dojoToRemove != null)
+            {
+                DojoList.Remove(dojoToRemove);
+            }
             ToastService.ShowToast("Dojo deleted successfully!", "text-bg-danger");
         }
         else

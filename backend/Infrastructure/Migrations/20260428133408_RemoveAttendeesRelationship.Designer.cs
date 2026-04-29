@@ -4,6 +4,7 @@ using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DojoDbContext))]
-    partial class DojoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260428133408_RemoveAttendeesRelationship")]
+    partial class RemoveAttendeesRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,10 +54,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrganizerId");
-
-                    b.HasIndex("PresenterId");
 
                     b.ToTable("AikidoEvents");
                 });
@@ -129,16 +128,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.AikidoEvent", b =>
                 {
-                    b.HasOne("Domain.Entities.Member", "Organizer")
-                        .WithMany()
-                        .HasForeignKey("OrganizerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Member", "Presenter")
-                        .WithMany()
-                        .HasForeignKey("PresenterId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.OwnsOne("Domain.ValueObjects.Address", "Address", b1 =>
                         {
                             b1.Property<int>("AikidoEventId")
@@ -193,10 +182,6 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Contact")
                         .IsRequired();
-
-                    b.Navigation("Organizer");
-
-                    b.Navigation("Presenter");
                 });
 
             modelBuilder.Entity("Domain.Entities.Dojo", b =>

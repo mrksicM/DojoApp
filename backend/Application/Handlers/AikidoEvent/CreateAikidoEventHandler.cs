@@ -22,12 +22,21 @@ namespace Application.Handlers.AikidoEvent
                 Title = dto.Title,
                 Type = dto.Type,
                 Date = dto.Date,
-                Address = dto.Address,
-                Contact = dto.Contact,
+                Address = new Domain.ValueObjects.Address
+                {
+                    Street = dto.Street,
+                    StreetNumber = dto.StreetNumber,
+                    City = dto.City,
+                    Country = dto.Country
+                },
+                Contact = new Domain.ValueObjects.Contact
+                {
+                    Email = dto.Email,
+                    PhoneNumber = dto.PhoneNumber
+                },
                 Description = dto.Description,
                 OrganizerId = dto.OrganizerId,
-                PresenterId = dto.PresenterId,
-                AttendeesIds = dto.AttendeesIds
+                PresenterId = dto.PresenterId
             };
             await _repo.AddAsync(aikidoEvent);
             return new AikidoEventDTO()
@@ -36,12 +45,15 @@ namespace Application.Handlers.AikidoEvent
                 Title = aikidoEvent.Title,
                 Type = aikidoEvent.Type,
                 Date = aikidoEvent.Date,
-                Address = aikidoEvent.Address,
-                Contact = aikidoEvent.Contact,
+                Street = aikidoEvent.Address.Street,
+                StreetNumber = aikidoEvent.Address.StreetNumber,
+                City = aikidoEvent.Address.City,
+                Country = aikidoEvent.Address.Country,
+                Email = aikidoEvent.Contact.Email,
+                PhoneNumber = aikidoEvent.Contact.PhoneNumber,
                 Description = aikidoEvent.Description,
                 OrganizerId = aikidoEvent.OrganizerId,
-                PresenterId = aikidoEvent.PresenterId,
-                AttendeesIds = aikidoEvent.AttendeesIds
+                PresenterId = aikidoEvent.PresenterId
             };
         }
     }

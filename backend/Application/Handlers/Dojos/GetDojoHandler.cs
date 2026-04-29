@@ -34,7 +34,9 @@ namespace Application.Handlers.Dojos
                 Email = dojo.Contact.Email,
                 PhoneNumber = dojo.Contact.PhoneNumber,
                 DojoChoId = dojo.DojoChoId,
-                DojoChoName = dojo.DojoCho != null ? $"{dojo.DojoCho.Name.FirstName} {dojo.DojoCho.Name.LastName}" : null,
+                DojoChoName = dojo.DojoCho?.Name is { FirstName: var firstName, LastName: var lastName }
+                    ? $"{firstName} {lastName}"
+                    : null!,
                 Members = dojo.Members.Select(m => new MembersDTO
                 {
                     Id = m.Id,

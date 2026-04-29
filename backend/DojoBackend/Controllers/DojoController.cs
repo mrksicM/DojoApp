@@ -11,14 +11,14 @@ namespace DojoBackend.Controllers
     {
 
         private readonly CreateDojoHandler _createHandler;
-        private readonly GetDojoHandler _getByIdHandler;
+        private readonly GetDojoHandler _getHandler;
         private readonly DeleteDojoHandler _deleteHandler;
         private readonly UpdateDojoHandler _updateHandler;
 
         public DojoController(CreateDojoHandler createHandler, GetDojoHandler getByIdHandler, DeleteDojoHandler deleteHandler, UpdateDojoHandler updateHandler)
         {
             _createHandler = createHandler;
-            _getByIdHandler = getByIdHandler;
+            _getHandler = getByIdHandler;
             _deleteHandler = deleteHandler;
             _updateHandler = updateHandler;
         }
@@ -50,7 +50,7 @@ namespace DojoBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var dojo = await _getByIdHandler.Handle(new GetDojoByIdQuery(id));
+            var dojo = await _getHandler.Handle(new GetDojoByIdQuery(id));
             if (dojo == null)
                 return NotFound();
             return Ok(dojo);
@@ -59,14 +59,14 @@ namespace DojoBackend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var dojos = await _getByIdHandler.Handle(new GetAllDojosQuery());
+            var dojos = await _getHandler.Handle(new GetAllDojosQuery());
             return Ok(dojos);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var dojo = await _getByIdHandler.Handle(new GetDojoByIdQuery(id));
+            var dojo = await _getHandler.Handle(new GetDojoByIdQuery(id));
             if (dojo == null)
                 return NotFound();
             await _deleteHandler.Handle(new DeleteDojoCommand(id));
@@ -84,7 +84,7 @@ namespace DojoBackend.Controllers
                 dto.Street,
                 dto.StreetNumber,
                 dto.City,
-                dto.Country,
+                dto.Country ?? "",
                 dto.Email,
                 dto.PhoneNumber,
                 dto.DojoChoId,
@@ -102,7 +102,7 @@ namespace DojoBackend.Controllers
         [HttpGet("{id}/members")]
         public async Task<IActionResult> GetMembers(int id)
         {
-            var dojo = await _getByIdHandler.Handle(new GetDojoByIdQuery(id));
+            var dojo = await _getHandler.Handle(new GetDojoByIdQuery(id));
 
             if (dojo == null)
                 return NotFound();

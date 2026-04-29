@@ -92,11 +92,14 @@
 
             // Update the dojo-cho member to belong to this dojo
             var dojoCho = DojoChoList.FirstOrDefault(m => m.Id == createdDojo.DojoChoId);
-            var oldDojo = DojoList.FirstOrDefault(d => d.Members.Any(m => m.Id == dojoCho.Id));
-            if (oldDojo != null)
+            if (dojoCho != null)
             {
-                oldDojo.Members.Remove(dojoCho);
-                await DojoService.UpdateAsync(oldDojo);
+                var oldDojo = DojoList.FirstOrDefault(d => d.Members.Any(m => m.Id == dojoCho.Id));
+                if (oldDojo != null)
+                {
+                    oldDojo.Members.Remove(dojoCho);
+                    await DojoService.UpdateAsync(oldDojo);
+                }
             }
 
             await OnDojoCreated.InvokeAsync(createdDojo);

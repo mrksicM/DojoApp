@@ -1,0 +1,88 @@
+@using BlazorApp.Interfaces
+@using BlazorApp.Models
+@using BlazorApp.Services
+@inject ICrudService<AikidoEvent> AikidoEventService
+<EditForm Model="newEvent" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <!-- Event Name -->
+    <div class="mb-3">
+        <label for="eventName">Event Name</label>
+        <InputText id="eventName" @bind-Value="newEvent.Title" class="form-control w-auto" />
+        <label for="eventType">Event Type</label>
+        <InputText id="eventType" @bind-Value="newEvent.Type" class="form-control w-auto" />
+    </div>
+
+    <!-- Date -->
+    <div class="mb-3">
+        <label for="eventDate">Date</label>
+        <InputDate id="eventDate" @bind-Value="newEvent.Date" class="form-control w-auto" />
+    </div>
+
+    <!-- Organizer -->
+    <div class="mb-3">
+        <label for="organizer">Organizer</label>
+        <InputSelect id="organizer" @bind-Value="newEvent.OrganizerId" class="form-select w-auto">
+            <option value="">-- select organizer --</option>
+            @foreach (var member in MembersList)
+            {
+                <option value="@member.Id">@member.FirstName @member.LastName</option>
+            }
+        </InputSelect>
+    </div>
+
+    <!-- Presenter -->
+    <div class="mb-3">
+        <label for="presenter">Presenter</label>
+        <InputSelect id="presenter" @bind-Value="newEvent.PresenterId" class="form-select w-auto">
+            <option value="">-- select presenter --</option>
+            @foreach (var member in MembersList)
+            {
+                <option value="@member.Id">@member.FirstName @member.LastName</option>
+            }
+        </InputSelect>
+    </div>
+
+    <!-- Address -->
+    <div class="mb-3">
+        <label for="address">Address</label>
+        <InputText id="address" @bind-Value="newEvent.Street" class="form-control w-auto" />
+        <label for="streetNumber">Street Number</label>
+        <InputText id="streetNumber" @bind-Value="newEvent.StreetNumber" class="form-control w-auto" />
+        <label for="city">City</label>
+        <InputText id="city" @bind-Value="newEvent.City" class="form-control w-auto" />
+        <label for="country">Country</label>
+        <InputText id="country" @bind-Value="newEvent.Country" class="form-control w-auto" />
+    </div>
+
+    <!-- Date -->
+    <div class="mb-3">
+        <label for="date">Date</label>
+        <InputDate id="date" @bind-Value="newEvent.Date" class="form-control w-auto" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Event</button>
+</EditForm>
+
+@code {
+    private AikidoEvent newEvent = new()
+    {
+        Date = DateTime.Today
+    };
+
+    private async Task HandleValidSubmit()
+    {
+        var createdEvent = await AikidoEventService.CreateAsync(newEvent);
+        if (createdEvent is not null)
+        {
+            await OnAikidoEventCreated.InvokeAsync(createdEvent);
+            newEvent = new() { Date = DateTime.Today };
+        }
+    }
+
+    [Parameter] public EventCallback<AikidoEvent> OnAikidoEventCreated { get; set; }
+    [Parameter] public List<Member> MembersList { get; set; } = new();
+    [Parameter] public List<Dojo> DojoList { get; set; } = new();
+    [Parameter] public List<Organization> OrganizationList { get; set; } = new();
+}

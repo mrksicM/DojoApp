@@ -42,6 +42,9 @@
 .bi-house-fill-nav-menu{
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-house-fill' viewBox='0 0 16 16'%3E%3Cpath d='M8.707 1.5a1 1 0 0 0-1.414 0l-6 6A1 1 0 0 0 2.707 9L3 8.707V14a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V10h2v4a1 1 0 0 0 1-1V8.707l.293.293a1 1 0 0 0 1.414-1l-6-6Z'/%3E%3C/svg%3E");
 }
+.bi-calendar-event-fill-nav-menu{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-calendar-event-fill' viewBox='0 0 16 16'%3E%3Cpath d='M4 .5a.5.5 0 0 1 .5.5V2h6V1a.5.5 0 0 1 1 0v1h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h1V1A.5.5 0 0 1 4 .5ZM11.5 8a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 .5-.5V8Z'/%3E%3C/svg%3E");
+}
 
 .nav-item {
     font-size: 0.9rem;

@@ -1,3 +1,4 @@
+using Application.Handlers.AikidoEvent;
 using Application.Handlers.Dojos;
 using Application.Handlers.Members;
 using Application.Handlers.Organization;
@@ -20,7 +21,7 @@ builder.Services.AddDbContext<DojoDbContext>(options =>
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
 builder.Services.AddScoped<IDojoRepository, DojoRepository>();
-
+builder.Services.AddScoped<IAikidoEventRepository, AikidoEventRepository>();
 // Register handlers
 builder.Services.AddScoped<CreateMemberHandler>();
 builder.Services.AddScoped<GetMemberHandler>();
@@ -36,6 +37,11 @@ builder.Services.AddScoped<CreateDojoHandler>();
 builder.Services.AddScoped<GetDojoHandler>();
 builder.Services.AddScoped<DeleteDojoHandler>();
 builder.Services.AddScoped<UpdateDojoHandler>();
+
+builder.Services.AddScoped<CreateAikidoEventHandler>();
+builder.Services.AddScoped<GetAikidoEventHandler>();
+builder.Services.AddScoped<DeleteAikidoEventHandler>();
+builder.Services.AddScoped<UpdateAikidoEventHandler>();
 
 // Controllers
 builder.Services.AddControllers();

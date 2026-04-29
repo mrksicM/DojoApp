@@ -16,12 +16,13 @@ namespace Domain.Entities
         public required Contact Contact { get; set; }
         public string? Description { get; set; }
         public int? OrganizerId { get; set; }
+        public Member? Organizer { get; set; }
         public int? PresenterId { get; set; }
-        public List<int> AttendeesIds { get; set; } = new ();
+        public Member? Presenter { get; set; }
 
         public AikidoEvent()
         {
-            
+
         }
 
         public AikidoEvent(int id, string title, string type, DateTime date, Address address, Contact contact, string? description = null, int? organizerId = null, int? presenterId = null)

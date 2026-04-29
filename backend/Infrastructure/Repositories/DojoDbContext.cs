@@ -56,18 +56,27 @@ namespace Infrastructure.Repositories
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-
             // AikidoEvent
             modelBuilder.Entity<AikidoEvent>(builder =>
             {
                 // Many-to-many join table for attendees
-                builder.HasMany<Member>()
+                // builder.HasMany<Member>()
+                //        .WithMany()
+                //        .UsingEntity<Dictionary<string, object>>(
+                //            "EventAttendees",
+                //            j => j.HasOne<Member>().WithMany().HasForeignKey("MemberId"),
+                //            j => j.HasOne<AikidoEvent>().WithMany().HasForeignKey("EventId")
+                //        );
+
+                builder.HasOne(e => e.Organizer)
                        .WithMany()
-                       .UsingEntity<Dictionary<string, object>>(
-                           "EventAttendees",
-                           j => j.HasOne<Member>().WithMany().HasForeignKey("MemberId"),
-                           j => j.HasOne<AikidoEvent>().WithMany().HasForeignKey("EventId")
-                       );
+                       .HasForeignKey(e => e.OrganizerId)
+                       .OnDelete(DeleteBehavior.Restrict);
+
+                builder.HasOne(e => e.Presenter)
+                       .WithMany()
+                       .HasForeignKey(e => e.PresenterId)
+                       .OnDelete(DeleteBehavior.Restrict);
 
                 builder.OwnsOne(e => e.Address);
                 builder.OwnsOne(e => e.Contact);

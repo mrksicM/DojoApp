@@ -10,7 +10,7 @@ namespace Domain.ValueObjects
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        public Name() { }
+        public Name() { FirstName = ""; LastName = ""; }
 
         public Name(string firstName, string lastName)
         {

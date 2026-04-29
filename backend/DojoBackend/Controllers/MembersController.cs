@@ -12,14 +12,14 @@ namespace DojoBackend.Controllers
     public class MembersController : ControllerBase
     {
         private readonly CreateMemberHandler _createHandler;
-        private readonly GetMemberHandler _getMemberHandler;
+        private readonly GetMemberHandler _getHandler;
         private readonly DeleteMemberHandler _deleteHandler;
         private readonly UpdateMemberHandler _updateHandler;
 
         public MembersController(CreateMemberHandler createHandler, GetMemberHandler getMemberHandler, DeleteMemberHandler deleteHandler, UpdateMemberHandler updateHandler)
         {
             _createHandler = createHandler;
-            _getMemberHandler = getMemberHandler;
+            _getHandler = getMemberHandler;
             _deleteHandler = deleteHandler;
             _updateHandler = updateHandler;
         }
@@ -44,7 +44,7 @@ namespace DojoBackend.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
-            var members = await _getMemberHandler.Handle(new GetAllMembersQuery());
+            var members = await _getHandler.Handle(new GetAllMembersQuery());
 
             var dtos = members.Select(m => new MembersDTO
             {
@@ -72,7 +72,7 @@ namespace DojoBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var member = await _getMemberHandler.Handle(new GetMemberByIdQuery(id));
+            var member = await _getHandler.Handle(new GetMemberByIdQuery(id));
             if (member == null)
                 return NotFound();
             return Ok(member);
@@ -81,7 +81,7 @@ namespace DojoBackend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var member = await _getMemberHandler.Handle(new GetMemberByIdQuery(id));
+            var member = await _getHandler.Handle(new GetMemberByIdQuery(id));
             if (member == null)
                 return NotFound();
             await _deleteHandler.Handle(new DeleteMemberCommand(id));

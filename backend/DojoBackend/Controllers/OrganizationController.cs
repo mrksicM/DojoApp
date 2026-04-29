@@ -12,14 +12,14 @@ namespace DojoBackend.Controllers
     public class OrganizationController : ControllerBase
     {
         private readonly CreateOrganizationHandler _createHandler;
-        private readonly GetOrganizationHandler _getByIdHandler;
+        private readonly GetOrganizationHandler _getHandler;
         private readonly DeleteOrganizationHandler _deleteHandler;
         private readonly UpdateOrganizationHandler _updateHandler;
 
         public OrganizationController(CreateOrganizationHandler createHandler, GetOrganizationHandler getByIdHandler, DeleteOrganizationHandler deleteHandler, UpdateOrganizationHandler updateHandler)
         {
             _createHandler = createHandler;
-            _getByIdHandler = getByIdHandler;
+            _getHandler = getByIdHandler;
             _deleteHandler = deleteHandler;
             _updateHandler = updateHandler;
         }
@@ -34,7 +34,7 @@ namespace DojoBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var organization = await _getByIdHandler.Handle(new GetOrganizationByIdQuery(id));
+            var organization = await _getHandler.Handle(new GetOrganizationByIdQuery(id));
             if (organization == null)
                 return NotFound();
             return Ok(organization);
@@ -43,7 +43,7 @@ namespace DojoBackend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var organization = await _getByIdHandler.Handle(new GetOrganizationByIdQuery(id));
+            var organization = await _getHandler.Handle(new GetOrganizationByIdQuery(id));
             if (organization == null)
                 return NotFound();
             await _deleteHandler.Handle(new DeleteOrganizationCommand(id));
@@ -106,7 +106,7 @@ namespace DojoBackend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var organizations = await _getByIdHandler.Handle(new GetAllOrganizationsQuery());
+            var organizations = await _getHandler.Handle(new GetAllOrganizationsQuery());
 
             var dtos = organizations.Select(organization => new OrganizationDTO
             {

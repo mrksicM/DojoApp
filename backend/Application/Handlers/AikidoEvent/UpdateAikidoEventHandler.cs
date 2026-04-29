@@ -20,14 +20,24 @@ namespace Application.Handlers.AikidoEvent
             aikidoEvent.Title = cmd.Title;
             aikidoEvent.Type = cmd.Type;
             aikidoEvent.Date = cmd.Date;
-            aikidoEvent.Address = cmd.Address;
-            aikidoEvent.Contact = cmd.Contact;
-            aikidoEvent.Description = cmd.Description;
+            aikidoEvent.Address = new Domain.ValueObjects.Address
+            {
+                Street = cmd.Street ?? string.Empty,
+                StreetNumber = cmd.StreetNumber ?? string.Empty,
+                City = cmd.City ?? string.Empty,
+                Country = cmd.Country ?? string.Empty
+            };
+            aikidoEvent.Contact = new Domain.ValueObjects.Contact
+            {
+                Email = cmd.Email ?? string.Empty,
+                PhoneNumber = cmd.PhoneNumber ?? string.Empty
+            };
+            aikidoEvent.Description = cmd.Description ?? string.Empty;
             aikidoEvent.OrganizerId = cmd.OrganizerId;
             aikidoEvent.PresenterId = cmd.PresenterId;
 
             await _repo.UpdateAsync(aikidoEvent);
             return true;
-        } 
+        }
     }
 }

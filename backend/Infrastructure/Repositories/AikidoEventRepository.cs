@@ -24,7 +24,10 @@ namespace Infrastructure.Repositories
 
         public async Task<List<AikidoEvent>> GetAllAsync()
         {
-            return await _context.AikidoEvents.ToListAsync();
+            return await _context.AikidoEvents
+                .Include(e => e.Organizer)
+                .Include(e => e.Presenter)
+                .ToListAsync();
         }
 
         public async Task UpdateAsync(AikidoEvent aikidoEvent)

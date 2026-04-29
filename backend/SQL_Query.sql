@@ -118,3 +118,14 @@ DELETE FROM [DojoAppDB].[dbo].[Dojos];
 
 ALTER TABLE [DojoAppDB].[dbo].[Dojos]
 ALTER COLUMN [Address_StreetNumber] NVARCHAR(50) NOT NULL;
+
+INSERT INTO [dbo].[AikidoEvents] 
+(Title, Type, Date, Address_Street, Address_StreetNumber, Address_City, Address_Country, 
+ Contact_Email, Contact_PhoneNumber, Description, OrganizerId, PresenterId, AttendeesIds)
+VALUES
+('Event 1', 'Embukai', '2025-05-01', 'Main St', '100', 'Tokyo', 'Japan', 
+ 'organizer1@dojo.com', '555-0001', 'First Aikido event', 1, 1, ''),
+('Event 2', 'Seminar', '2025-05-15', 'Main St', '200', 'Tokyo', 'Japan', 
+ 'organizer2@dojo.com', '555-0002', 'Training seminar', 2, 2, ''),
+('Event 3', 'Public Display', '2025-05-29', 'Main St', '300', 'Tokyo', 'Japan', 
+ 'organizer3@dojo.com', '555-0003', 'Public demonstration', 3, 3, '');

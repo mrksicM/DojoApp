@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.ValueObjects;
 
-namespace Application.DTOs
+namespace BlazorApp.Models
 {
-    public class AikidoEventDTO
+    public class AikidoEvent
     {
         public int Id { get; set; }
-        public required string Title { get; set; }
-        public required string Type { get; set; } // Seminar, Grading, Embukai, etc.
-        public required DateTime Date { get; set; }
+        public string Title { get; set; }
+        public string Type { get; set; } // Seminar, Grading, Embukai, etc.
+        public DateTime Date { get; set; }
 
         // Address
         public string Street { get; set; } = "";
@@ -24,19 +23,28 @@ namespace Application.DTOs
         public string PhoneNumber { get; set; } = "";
 
         public string? Description { get; set; }
-
         public int? OrganizerId { get; set; }
-        public MembersDTO? Organizer { get; set; }
-
+        public Member? Organizer { get; set; }
         public int? PresenterId { get; set; }
-        public MembersDTO? Presenter { get; set; }
+        public Member? Presenter { get; set; }
+        public List<int> AttendeesIds { get; set; } = new();
 
-        public AikidoEventDTO()
+        public AikidoEvent()
         {
-
+            Title = string.Empty;
+            Type = string.Empty;
+            Street = string.Empty;
+            StreetNumber = string.Empty;
+            City = string.Empty;
+            Email = string.Empty;
+            PhoneNumber = string.Empty;
+            Description = string.Empty;
+            OrganizerId = null;
+            PresenterId = null;
+            Organizer = null;
+            Presenter = null;
         }
-
-        public AikidoEventDTO(int id, string title, string type, DateTime date, string street, string streetNumber, string city, string? country, string email, string phoneNumber, string? description = null, int? organizerId = null, int? presenterId = null, MembersDTO? organizer = null, MembersDTO? presenter = null)
+        public AikidoEvent(int id, string title, string type, DateTime date, string street, string streetNumber, string city, string? country, string email, string phoneNumber, string? description, int? organizerId, int? presenterId, Member? organizer, Member? presenter)
         {
             Id = id;
             Title = title;

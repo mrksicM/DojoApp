@@ -68,7 +68,7 @@ namespace Application.Handlers.Dojos
                         },
                         IsActive = true
                     }
-                    : null,
+                    : null!,
                 Members = cmd.DojoDTO.Members.Select(m => new Member()
                 {
                     Name = new Domain.ValueObjects.Name(m.FirstName, m.LastName),

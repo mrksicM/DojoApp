@@ -12,6 +12,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped<ICrudService<Member>, MemberService>();
 builder.Services.AddScoped<ICrudService<Organization>, OrganizationService>();
 builder.Services.AddScoped<ICrudService<Dojo>, DojoService>();
+builder.Services.AddScoped<ICrudService<AikidoEvent>, AikidoEventService>();
 builder.Services.AddScoped<IMembersService, MemberService>();
 builder.Services.AddScoped<ToastService>();
 

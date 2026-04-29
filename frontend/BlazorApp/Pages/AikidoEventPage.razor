@@ -1,0 +1,61 @@
+@page "/AikidoEvents"
+@inject ICrudService<AikidoEvent> AikidoEventService
+@inject ICrudService<Member> MemberService
+
+@using BlazorApp.Interfaces
+@using BlazorApp.Models
+@using BlazorApp.Components.AikidoEvents
+@using BlazorApp.Services
+
+
+<h3>Aikido Event Management</h3>
+
+<AikidoEventForm OnAikidoEventCreated="AddAikidoEvent" MembersList="@MembersList" />
+<div class="border-top my-3"></div>
+<AikidoEventTable AikidoEventList="@AikidoEventList" MembersList="@MembersList" />
+
+@code {
+    private List<AikidoEvent> AikidoEventList = new();
+    public List<Member> MembersList = new();
+        
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            AikidoEventList = (await AikidoEventService.GetAllAsync()).ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load events: {ex.Message}");
+            AikidoEventList = new List<AikidoEvent>();
+        }
+
+        try
+        {
+            MembersList = (await MemberService.GetAllAsync()).ToList();
+            Console.WriteLine($"Loaded {MembersList.Count} members");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load members: {ex.Message}");
+            MembersList = new List<Member>();
+        }
+
+        Console.WriteLine($"Loaded {MembersList.Count} members");
+        foreach (var m in MembersList)
+        {
+            Console.WriteLine($"{m.Id} - {m.FirstName} {m.LastName}");
+        }
+
+        StateHasChanged(); // force re-render
+    }
+
+    private async Task AddAikidoEvent(AikidoEvent AikidoEvent)
+    {
+        var created = await AikidoEventService.CreateAsync(AikidoEvent);
+        if (created is not null)
+        {
+            AikidoEventList.Add(created);
+        }
+    }
+}
